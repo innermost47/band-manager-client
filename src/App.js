@@ -8,6 +8,9 @@ import Login from "./pages/Login";
 import ManageTablature from "./pages/ManageTablature";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Users from "./pages/Users";
+import AdministrativeTasks from "./pages/AdministrativeTasks";
+import Events from "./pages/Events";
+import Boards from "./pages/Boards";
 
 function App() {
   return (
@@ -74,6 +77,33 @@ function App() {
             <>
               <Navbar />
               <ProtectedRoute component={Users} />
+            </>
+          }
+        />
+        <Route
+          path="/administrative-tasks"
+          element={
+            <>
+              <Navbar />
+              <ProtectedRoute component={AdministrativeTasks} />
+            </>
+          }
+        />
+        <Route
+          path="/events"
+          element={
+            <>
+              <Navbar />
+              <ProtectedRoute component={Events} />
+            </>
+          }
+        />
+        <Route
+          path="/boards"
+          element={
+            <>
+              <Navbar />
+              <ProtectedRoute component={Boards} />
             </>
           }
         />
