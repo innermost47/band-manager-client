@@ -10,4 +10,8 @@ export const projectService = {
     await api.post(`/api/projects/update-profile-image`, data, {
       headers: { "Content-Type": "multipart/form-data" },
     }),
+  getProfileImageFile: async (filePath) =>
+    await api.get("/profile-image/" + filePath, {
+      responseType: "blob",
+    }),
 };

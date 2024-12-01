@@ -38,7 +38,18 @@
   /* for dropdown */
   color: #444 !important;
 }
-.project-profile-image {
+.project-profile-image-wrapper {
   border-radius: 50%;
+  height: 200px;
   width: 200px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.project-profile-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
 }

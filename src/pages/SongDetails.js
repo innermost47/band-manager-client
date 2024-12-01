@@ -173,6 +173,11 @@ const SongDetails = () => {
       setSong(response.data);
       setToastMessage("Audio files uploaded successfully!");
       setToastType("success");
+      const audioFileUrls = {};
+      for (const audio of response.data.audioFiles) {
+        audioFileUrls[audio.id] = await getAudioFile(audio.path);
+      }
+      setAudioUrls(audioFileUrls);
     } catch (error) {
       console.error("Error uploading audio files:", error);
       setToastMessage("Failed to upload audio files. Please try again.");

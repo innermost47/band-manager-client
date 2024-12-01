@@ -17,8 +17,8 @@ const ProjectDetails = () => {
       try {
         const response = await projectService.getProject(id);
         setProject(response.data.project);
-        if (response.data.project?.profilImage) {
-          setImage(response.data.project.profilImage);
+        if (response.data.project.profileImage) {
+          await getProfileImageFile(response.data.project.profileImage);
         } else {
           setImage("/default-profile.png");
         }
@@ -53,6 +53,17 @@ const ProjectDetails = () => {
     document.getElementById("image-input").click();
   };
 
+  const getProfileImageFile = async (filePath) => {
+    try {
+      const response = await projectService.getProfileImageFile(filePath);
+      const image = URL.createObjectURL(response.data);
+      setImage(image);
+    } catch (error) {
+      console.error("Error fetching image profile file:", error);
+      return null;
+    }
+  };
+
   const handleImageChange = async (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -81,7 +92,7 @@ const ProjectDetails = () => {
 
   return (
     <div className="container mt-5">
-      <div className="d-flex justify-content-center align-items-center mb-5">
+      <div className="d-flex justify-content-center align-items-center mb-3">
         <div
           className="project-profile-image-wrapper"
           onClick={handleImageClick}
