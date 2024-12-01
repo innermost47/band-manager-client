@@ -7,6 +7,7 @@ import SongDetails from "./pages/SongDetails";
 import Login from "./pages/Login";
 import ManageTablature from "./pages/ManageTablature";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Users from "./pages/Users";
 
 function App() {
   return (
@@ -64,6 +65,15 @@ function App() {
             <>
               <Navbar />
               <ProtectedRoute component={ManageTablature} />
+            </>
+          }
+        />
+        <Route
+          path="/users"
+          element={
+            <>
+              <Navbar />
+              <ProtectedRoute component={Users} />
             </>
           }
         />
