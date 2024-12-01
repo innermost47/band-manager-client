@@ -8,6 +8,8 @@ const ProjectDetails = () => {
   const [project, setProject] = useState(null);
   const [selectedSong, setSelectedSong] = useState(null);
   const [isSongFormVisible, setIsSongFormVisible] = useState(false);
+  const [image, setImage] = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -15,11 +17,15 @@ const ProjectDetails = () => {
       try {
         const response = await projectService.getProject(id);
         setProject(response.data.project);
+        if (response.data.project?.profilImage) {
+          setImage(response.data.project.profilImage);
+        } else {
+          setImage("/default-profile.png");
+        }
       } catch (error) {
         console.error("Error fetching project details:", error);
       }
     };
-
     fetchProject();
   }, [id]);
 
@@ -43,6 +49,28 @@ const ProjectDetails = () => {
     setSelectedSong(null);
   };
 
+  const handleImageClick = () => {
+    document.getElementById("image-input").click();
+  };
+
+  const handleImageChange = async (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setIsUploading(true);
+      const formData = new FormData();
+      formData.append("profile_image", file);
+      formData.append("project_id", project.id);
+      try {
+        await projectService.updateProfileImage(formData);
+        setImage(URL.createObjectURL(file));
+        setIsUploading(false);
+      } catch (error) {
+        console.error("Erreur lors de l'upload de l'image de profil:", error);
+        setIsUploading(false);
+      }
+    }
+  };
+
   if (!project) {
     return (
       <div className="container mt-5">
@@ -53,6 +81,31 @@ const ProjectDetails = () => {
 
   return (
     <div className="container mt-5">
+      <div className="d-flex justify-content-center align-items-center mb-5">
+        <div
+          className="project-profile-image-wrapper"
+          onClick={handleImageClick}
+          style={{ cursor: "pointer" }}
+        >
+          <img
+            className="project-profile-image"
+            src={image}
+            alt="Project Profile"
+          />
+        </div>
+        {isUploading && (
+          <div className="spinner-border text-primary" role="status">
+            <span className="visually-hidden">Uploading...</span>
+          </div>
+        )}
+      </div>
+      <input
+        type="file"
+        id="image-input"
+        style={{ display: "none" }}
+        accept="image/*"
+        onChange={handleImageChange}
+      />
       <h2 className="text-center mb-3">{project.name}</h2>
       <div className="card mb-3 shadow">
         <div className="card-body">

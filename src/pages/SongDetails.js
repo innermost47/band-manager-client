@@ -33,6 +33,7 @@ const SongDetails = () => {
   const [audioDescriptions, setAudioDescriptions] = useState({});
   const [toastMessage, setToastMessage] = useState(null);
   const [toastType, setToastType] = useState("success");
+  const [audioUrls, setAudioUrls] = useState({});
 
   useEffect(() => {
     const fetchSong = async () => {
@@ -50,6 +51,11 @@ const SongDetails = () => {
           setActiveTab(response.data.audioFileTypes[0].id);
         }
         setAudioDescriptions(initialDescriptions);
+        const audioFileUrls = {};
+        for (const audio of response.data.audioFiles) {
+          audioFileUrls[audio.id] = await getAudioFile(audio.path);
+        }
+        setAudioUrls(audioFileUrls);
       } catch (error) {
         console.error("Error fetching song details:", error);
       }
@@ -194,11 +200,22 @@ const SongDetails = () => {
     }
   };
 
+  const getAudioFile = async (audioFilePath) => {
+    try {
+      const response = await songService.getAudioFile(audioFilePath);
+      const audioUrl = URL.createObjectURL(response.data);
+      return audioUrl;
+    } catch (error) {
+      console.error("Error fetching audio file:", error);
+      return null;
+    }
+  };
+
   const handleDownloadAudio = async (audioId) => {
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(
-        `${API_BASE_URL}/api/audio-files/download/${audioId}`,
+        `${API_BASE_URL}/audio/download/${audioId}`,
         {
           method: "GET",
           headers: {
@@ -455,20 +472,18 @@ const SongDetails = () => {
                             className="list-group-item d-flex flex-column"
                           >
                             <div className="d-flex justify-content-between align-items-center">
-                              <audio controls className="me-3">
-                                <source
-                                  src={`${API_BASE_URL}/${audio.path}`}
-                                  type="audio/mpeg"
-                                />
-                                Your browser does not support the audio element.
-                              </audio>
-                              <a
-                                href={`${API_BASE_URL}/${audio.path}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                              >
-                                {audio.filename}
-                              </a>
+                              {audioUrls[audio.id] ? (
+                                <audio controls className="me-3">
+                                  <source
+                                    src={audioUrls[audio.id]}
+                                    type="audio/mpeg"
+                                  />
+                                  Your browser does not support the audio
+                                  element.
+                                </audio>
+                              ) : (
+                                <p>Loading audio...</p>
+                              )}
                               <button
                                 className="btn btn-sm btn-danger"
                                 onClick={() => handleDeleteAudioFile(audio.id)}

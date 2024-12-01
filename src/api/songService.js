@@ -12,6 +12,10 @@ export const songService = {
   deleteAudioFile: async (id) => await api.delete(`/api/audio-files/${id}`),
   updateAudioFile: async (id, data) =>
     await api.put(`/api/audio-files/${id}`, data),
+  getAudioFile: async (audioFilePath) =>
+    await api.get(audioFilePath, {
+      responseType: "blob",
+    }),
 };
 
 export default songService;
