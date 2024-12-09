@@ -1,25 +1,33 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { loginService } from "../api/loginService";
+import { userService } from "../api/userService";
 
-const Verify2FA = () => {
-  const [code, setCode] = useState("");
+const VerifyEmail = () => {
+  const [verificationCode, setVerificationCode] = useState("");
   const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
   const [showLoader, setLoader] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const { email } = location.state || {};
+  const email = location.state?.email;
 
   const handleVerify = async (e) => {
     e.preventDefault();
     setLoader(true);
     try {
-      const response = await loginService.verify2FA({ email, code });
+      const response = await userService.verifyEmail({
+        email,
+        code: verificationCode,
+      });
 
-      localStorage.setItem("token", response.data.token);
-      navigate("/dashboard");
+      if (response.data.message === "Email verified successfully.") {
+        console.log("Email verification successful, redirecting to login...");
+        setMessage("Your email has been verified successfully. Redirecting...");
+        setTimeout(() => navigate("/"), 2000);
+      }
     } catch (error) {
-      setError(error.response?.data?.error || "An error occurred");
+      console.error("Error during verification:", error);
+      setError(error.response?.data?.error || "Invalid verification code");
     } finally {
       setLoader(false);
     }
@@ -34,12 +42,12 @@ const Verify2FA = () => {
               className="rounded-circle bg-primary bg-opacity-10 d-inline-flex align-items-center justify-content-center mb-3"
               style={{ width: "64px", height: "64px" }}
             >
-              <i className="bi bi-shield-lock fs-2 text-primary"></i>
+              <i className="bi bi-envelope-check fs-2 text-primary"></i>
             </div>
-
-            <h4 className="mb-2">Two-Factor Authentication</h4>
+            <h4 className="mb-2">Email Verification</h4>
             <p className="text-muted small">
-              Please enter the verification code sent to your email to continue
+              Please enter the verification code sent to{" "}
+              <strong>{email}</strong>
             </p>
           </div>
 
@@ -48,6 +56,12 @@ const Verify2FA = () => {
               <div className="alert alert-danger d-flex align-items-center">
                 <i className="bi bi-exclamation-circle me-2"></i>
                 {error}
+              </div>
+            )}
+            {message && (
+              <div className="alert alert-success d-flex align-items-center">
+                <i className="bi bi-check-circle me-2"></i>
+                {message}
               </div>
             )}
 
@@ -62,10 +76,10 @@ const Verify2FA = () => {
                 <input
                   type="text"
                   className="form-control"
-                  value={code}
-                  onChange={(e) => setCode(e.target.value)}
+                  value={verificationCode}
+                  onChange={(e) => setVerificationCode(e.target.value)}
                   required
-                  placeholder="Enter code..."
+                  placeholder="Enter verification code..."
                   maxLength="6"
                 />
               </div>
@@ -83,8 +97,8 @@ const Verify2FA = () => {
                 </button>
               ) : (
                 <button type="submit" className="btn btn-primary py-2">
-                  <i className="bi bi-shield-check me-2"></i>
-                  Verify Code
+                  <i className="bi bi-check-circle me-2"></i>
+                  Verify Email
                 </button>
               )}
             </div>
@@ -95,4 +109,4 @@ const Verify2FA = () => {
   );
 };
 
-export default Verify2FA;
+export default VerifyEmail;

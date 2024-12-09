@@ -53,3 +53,28 @@
   object-fit: cover;
   object-position: center;
 }
+.overflowScroll {
+  overflow-x: scroll;
+}
+.fitContent {
+  width: 1%;
+  white-space: nowrap;
+}
+.rhap_time {
+  color: #fff !important;
+}
+.rhap_container {
+  box-shadow: none !important;
+}
+.rhap_main-controls > button {
+  font-size: unset !important;
+}
+.rhap_additional-controls > button {
+  font-size: unset !important;
+}
+.rhap_volume-controls > button {
+  font-size: unset !important;
+}
+.rhap_volume-button > button {
+  font-size: unset !important;
+}

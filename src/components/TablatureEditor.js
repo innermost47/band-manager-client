@@ -8,9 +8,7 @@ const TablatureEditor = ({ content, onSave, isUpdate }) => {
   const [toastType, setToastType] = useState("success");
 
   useEffect(() => {
-    if (content !== currentContent) {
-      setCurrentContent(content);
-    }
+    setCurrentContent(content);
   }, [content]);
 
   const handleContentChange = (e) => {
@@ -35,22 +33,48 @@ const TablatureEditor = ({ content, onSave, isUpdate }) => {
   };
 
   return (
-    <div>
-      <label className="form-label">Tablature editor</label>
-      <textarea
-        className="form-control"
-        rows="5"
-        value={currentContent}
-        onChange={handleContentChange}
-        placeholder="Enter notes in VexTab format (e.g., 5/2 5/3 7/4)"
-      />
-      <div className="mt-3 w-100">
-        <VexTabEditor content={currentContent} />
+    <div className="card shadow-sm">
+      <div className="card-header">
+        <div className="d-flex align-items-center">
+          <div
+            className="rounded-circle me-2 d-flex align-items-center justify-content-center"
+            style={{
+              width: "32px",
+              height: "32px",
+              minWidth: "32px",
+            }}
+          >
+            <i className="bi bi-music-note-list fs-5 text-primary"></i>
+          </div>
+          <h5 className="mb-0">Tablature Editor</h5>
+        </div>
       </div>
-      <button className="btn btn-warning mt-3 mb-3" onClick={handleSave}>
-        <i className="bi bi-pencil-square me-1"></i>{" "}
-        {isUpdate ? "Update" : "Create"} Tablature
-      </button>
+
+      <div className="card-body">
+        <div className="mb-4">
+          <div className="input-group">
+            <textarea
+              className="form-control"
+              rows="5"
+              value={currentContent}
+              onChange={handleContentChange}
+              placeholder="Enter your notes in VexTab format..."
+            />
+          </div>
+        </div>
+        <div className="mb-4">
+          <VexTabEditor content={currentContent} />
+        </div>
+        <div className="d-flex justify-content-end">
+          <button className="btn btn-primary" onClick={handleSave}>
+            <i
+              className={`bi ${isUpdate ? "bi-check-lg" : "bi-plus-lg"} me-2`}
+            ></i>
+            {isUpdate ? "Update Tablature" : "Create Tablature"}
+          </button>
+        </div>
+      </div>
+
       <Toast
         message={toastMessage}
         type={toastType}

@@ -8,6 +8,7 @@ import Quill from "../components/Quill";
 import { confirmAlert } from "react-confirm-alert";
 import Toast from "../components/Toast";
 import { tablatureService } from "../api/tablatureService";
+import CardHeader from "../components/CardHeader";
 
 const NOTES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
 const MODES = [
@@ -53,7 +54,7 @@ const SongDetails = () => {
         setAudioDescriptions(initialDescriptions);
         const audioFileUrls = {};
         for (const audio of response.data.audioFiles) {
-          audioFileUrls[audio.id] = await getAudioFile(audio.path);
+          audioFileUrls[audio.id] = API_BASE_URL + "/" + audio.signed_url;
         }
         setAudioUrls(audioFileUrls);
       } catch (error) {
@@ -69,8 +70,9 @@ const SongDetails = () => {
     setTimeout(() => setToastMessage(null), 3000);
   };
 
-  const handleSaveBpmScale = async () => {
+  const handleSaveBpmScale = async (e) => {
     try {
+      e.preventDefault();
       await songService.updateSong(song.song.id, { bpm, scale });
       setIsEditingBpmScale(false);
     } catch (error) {
@@ -175,7 +177,7 @@ const SongDetails = () => {
       setToastType("success");
       const audioFileUrls = {};
       for (const audio of response.data.audioFiles) {
-        audioFileUrls[audio.id] = await getAudioFile(audio.path);
+        audioFileUrls[audio.id] = API_BASE_URL + "/" + audio.signed_url;
       }
       setAudioUrls(audioFileUrls);
     } catch (error) {
@@ -205,18 +207,7 @@ const SongDetails = () => {
     }
   };
 
-  const getAudioFile = async (audioFilePath) => {
-    try {
-      const response = await songService.getAudioFile(audioFilePath);
-      const audioUrl = URL.createObjectURL(response.data);
-      return audioUrl;
-    } catch (error) {
-      console.error("Error fetching audio file:", error);
-      return null;
-    }
-  };
-
-  const handleDownloadAudio = async (audioId) => {
+  const handleDownloadAudio = async (audioId, audioType) => {
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(
@@ -235,7 +226,11 @@ const SongDetails = () => {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = "audio-file.mp3";
+      a.download = (song.song.title + "-" + audioType + ".mp3")
+        .toLocaleLowerCase()
+        .replace(" ", "_")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "");
       a.click();
       window.URL.revokeObjectURL(url);
     } catch (error) {
@@ -272,315 +267,435 @@ const SongDetails = () => {
   if (!song) {
     return (
       <div className="container mt-5">
-        <div className="text-center">Loading...</div>
+        <div className="d-flex justify-content-center align-items-center">
+          <div className="spinner-border text-info" role="status">
+            <span className="visually-hidden">Loading song...</span>
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="container mt-5">
-      <h2 className="text-center mb-4">{song.song.title}</h2>
-      <hr />
-      <div className="mb-4">
-        <p>
-          <b>Created at:</b>{" "}
-          {new Date(song.song.created_at).toLocaleDateString()}
-        </p>
-        <p>
-          <b>Updated at:</b>{" "}
-          {song.song.updated_at
-            ? new Date(song.song.updated_at).toLocaleDateString()
-            : "N/A"}
-        </p>
-        {isEditingBpmScale ? (
-          <>
-            <div className="mb-3">
-              <label htmlFor="bpmInput" className="form-label">
-                BPM
-              </label>
-              <input
-                id="bpmInput"
-                type="number"
-                className="form-control"
-                value={bpm}
-                onChange={(e) => setBpm(Number(e.target.value))}
-                min="20"
-                max="280"
-              />
-            </div>
-            <div className="mb-3">
-              <label htmlFor="scaleSelect" className="form-label">
-                Scale
-              </label>
-              <select
-                id="scaleSelect"
-                className="form-select"
-                value={scale}
-                onChange={(e) => setScale(e.target.value)}
-              >
-                {NOTES.map((note) =>
-                  MODES.map((mode) => (
-                    <option key={`${note} ${mode}`} value={`${note} ${mode}`}>
-                      {note} {mode}
-                    </option>
-                  ))
-                )}
-              </select>
-            </div>
-            <button
-              className="btn btn-success me-2"
-              onClick={handleSaveBpmScale}
-            >
-              <i className="bi bi-save me-1"></i> Save
-            </button>
-            <button
-              className="btn btn-secondary"
-              onClick={() => setIsEditingBpmScale(false)}
-            >
-              <i className="bi bi-x-circle me-1"></i> Cancel
-            </button>
-          </>
-        ) : (
-          <>
-            <p>
-              <b>BPM:</b> {bpm}
-            </p>
-            <p>
-              <b>Scale:</b> {scale}
-            </p>
-            <button
-              className="btn btn-warning"
-              onClick={() => setIsEditingBpmScale(true)}
-            >
-              <i className="bi bi-pencil-square me-2"></i> Edit BPM & Scale
-            </button>
-          </>
-        )}
-      </div>
-      <hr />
-      <h3 className="mb-3">Lyrics</h3>
-      {isEditingLyrics ? (
-        <>
-          <Quill
-            value={lyrics}
-            onChange={(content) => setLyrics(content)}
-            placeholder="Write your lyrics here..."
-            className="quill-editor"
-          />
-          <button
-            className="btn btn-success mt-3 me-2"
-            onClick={handleLyricsSave}
-          >
-            <i className="bi bi-save"></i> Save Lyrics
-          </button>
-        </>
-      ) : lyrics ? (
-        <div
-          dangerouslySetInnerHTML={{ __html: lyrics }}
-          className="border p-3 rounded mb-3"
-        ></div>
-      ) : (
-        <p className="text-muted">No lyrics available for this song.</p>
-      )}
-      <button
-        className="btn btn-warning mt-3"
-        onClick={() => setIsEditingLyrics(!isEditingLyrics)}
-      >
-        <i className="bi bi-pencil-square me-2"></i>
-        {isEditingLyrics ? "Cancel" : "Edit Lyrics"}
-      </button>
-      <hr />
-      <h3 className="mt-4 mb-3">Tablatures</h3>
-      {song.tablatures.length > 0 ? (
-        <ul className="list-group">
-          {song.tablatures.map((tab) => (
-            <li
-              key={tab.id}
-              className="list-group-item d-flex justify-content-between align-items-center"
-            >
-              <div
-                onClick={() =>
-                  navigate(`/tablatures/update/${tab.id}/${song.song.id}`)
-                }
-                style={{ cursor: "pointer", flexGrow: 1 }}
-                className="d-flex align-items-center"
-              >
-                <i className="bi bi-folder me-2 text-primary"></i>
-                <span>{tab.title}</span>
-                <i
-                  className="bi bi-info-circle ms-2 text-info"
-                  title="Click to view more"
-                ></i>
+    <div className="container mt-5 mb-3">
+      {/* En-tête de la chanson */}
+      <div className="row mb-3">
+        <div className="col-12">
+          <div className="card shadow mb-3">
+            <div className="card-body p-4">
+              <div className="text-center mb-4">
+                <h1 className="display-5">{song.song.title}</h1>
               </div>
-              <button
-                className="btn btn-sm btn-danger"
-                onClick={() => handleDeleteTablature(tab.id)}
-              >
-                <i className="bi bi-trash-fill"></i> Delete
-              </button>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <div className="text-center">
-          <p className="text-muted mb-1">
-            No tablatures available for this song.
-          </p>
-        </div>
-      )}
-      <div className="text-center">
-        <button
-          className="btn btn-primary mt-3"
-          onClick={() => navigate(`/tablatures/create/${song.song.id}`)}
-        >
-          <i className="bi bi-plus-circle"></i> Create Tablature
-        </button>
-      </div>
-      <hr />
-      <div>
-        <ul className="nav nav-pills">
-          {song.audioFileTypes.map((type) => (
-            <li key={type.id} className="nav-item">
-              <a
-                className={`nav-link ${activeTab === type.id ? "active" : ""}`}
-                href="#"
-                onClick={(e) => {
-                  e.preventDefault();
-                  setActiveTab(type.id);
-                }}
-              >
-                {type.name}
-              </a>
-            </li>
-          ))}
-        </ul>
-
-        <div className="mt-4">
-          {song.audioFileTypes.map(
-            (type) =>
-              activeTab === type.id && (
-                <div key={type.id} className="tab-pane fade show active">
-                  <h4 className="mt-3 mb-3">{type.name} Files</h4>
-                  <ul className="list-group">
-                    {song.audioFiles.filter(
-                      (audio) => audio.audioFileType.name === type.name
-                    ).length === 0 ? (
-                      <li className="list-group-item">No such audio file.</li>
-                    ) : (
-                      song.audioFiles
-                        .filter(
-                          (audio) => audio.audioFileType.name === type.name
-                        )
-                        .map((audio) => (
-                          <li
-                            key={audio.id}
-                            className="list-group-item d-flex flex-column"
-                          >
-                            <div className="d-flex justify-content-between align-items-center">
-                              {audioUrls[audio.id] ? (
-                                <audio controls className="me-3">
-                                  <source
-                                    src={audioUrls[audio.id]}
-                                    type="audio/mpeg"
-                                  />
-                                  Your browser does not support the audio
-                                  element.
-                                </audio>
-                              ) : (
-                                <p>Loading audio...</p>
-                              )}
-                              <button
-                                className="btn btn-sm btn-danger"
-                                onClick={() => handleDeleteAudioFile(audio.id)}
-                              >
-                                <i className="bi bi-trash-fill"></i> Delete
-                              </button>
-                            </div>
-                            <div className="mt-4 d-flex align-items-center">
-                              <label
-                                htmlFor={`description-${audio.id}`}
-                                className="form-label me-2"
-                              >
-                                <strong> Description:</strong>
-                              </label>
-                              <input
-                                type="text"
-                                id={`description-${audio.id}`}
-                                className="form-control me-2"
-                                value={audioDescriptions[audio.id] || ""}
-                                onChange={(e) =>
-                                  handleDescriptionChange(
-                                    audio.id,
-                                    e.target.value
-                                  )
-                                }
-                                placeholder="Add a description for this audio..."
-                              />
-                            </div>
-                            <div className="mt-4 d-flex align-items-center">
-                              <label
-                                htmlFor={`audio-type-${audio.id}`}
-                                className="form-label me-2"
-                              >
-                                <strong>Change Type:</strong>
-                              </label>
-                              <select
-                                id={`audio-type-${audio.id}`}
-                                className="form-select me-2"
-                                value={
-                                  audio.audioFileType
-                                    ? audio.audioFileType.id
-                                    : ""
-                                }
-                                onChange={(e) =>
-                                  handleAudioTypeChange(
-                                    audio.id,
-                                    e.target.value
-                                  )
-                                }
-                              >
-                                {song.audioFileTypes.map((type) => (
-                                  <option key={type.id} value={type.id}>
-                                    {type.name}
-                                  </option>
-                                ))}
-                              </select>
-                            </div>
-                            <div className="mt-4 mb-2 d-flex flex-direction-row justify-content-between">
-                              <button
-                                className="btn btn-sm btn-warning"
-                                onClick={() =>
-                                  handleUpdateAudioDescription(audio.id)
-                                }
-                              >
-                                <i className="bi bi-save me-2"></i>Update
-                                description
-                              </button>
-                              <button
-                                className="btn btn-sm btn-info"
-                                onClick={() => handleDownloadAudio(audio.id)}
-                              >
-                                <i className="bi bi-download me-2"></i> Download
-                              </button>
-                            </div>
-                          </li>
-                        ))
-                    )}
-                  </ul>
+              <hr className="my-4" />
+              <div className="row g-4 justify-content-center">
+                <div className="col-md-5">
+                  <div className="d-flex align-items-center">
+                    <div
+                      className="rounded-circle bg-primary bg-opacity-10 p-2 me-3 d-flex align-items-center justify-content-center"
+                      style={{
+                        width: "32px",
+                        height: "32px",
+                        minWidth: "32px",
+                      }}
+                    >
+                      <i className="bi bi-calendar-date text-primary"></i>
+                    </div>
+                    <div>
+                      <small className="text-muted d-block">Created</small>
+                      <span className="fs-6">
+                        {new Date(song.song.created_at).toLocaleDateString()}
+                      </span>
+                    </div>
+                  </div>
                 </div>
-              )
-          )}
+
+                <div className="col-md-5">
+                  <div className="d-flex align-items-center">
+                    <div
+                      className="rounded-circle bg-primary bg-opacity-10 p-2 me-3 d-flex align-items-center justify-content-center"
+                      style={{
+                        width: "32px",
+                        height: "32px",
+                        minWidth: "32px",
+                      }}
+                    >
+                      <i className="bi bi-clock-history text-primary"></i>
+                    </div>
+                    <div>
+                      <small className="text-muted d-block">Last updated</small>
+                      <span className="fs-6">
+                        {song.song.updated_at
+                          ? new Date(song.song.updated_at).toLocaleDateString()
+                          : "N/A"}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-      <div
-        {...getRootProps()}
-        className="mt-3 p-3 border border-dashed text-center rounded mb-3"
-        style={{ cursor: "pointer" }}
-      >
-        <input {...getInputProps()} />
-        <i className="bi bi-upload"></i> Drag and drop audio files here or click
-        to upload.
+
+      <div className="row g-4">
+        {/* Section BPM et Scale */}
+        <div className="col-md-6">
+          <div className="card shadow h-100">
+            <CardHeader
+              title={"Musical Properties"}
+              icon={"bi-music-note"}
+              actionButton={
+                !isEditingBpmScale && (
+                  <>
+                    <i className="bi bi-pencil me-1"></i> Edit
+                  </>
+                )
+              }
+              onAction={() => setIsEditingBpmScale(true)}
+            />
+            <div className="card-body">
+              {isEditingBpmScale ? (
+                <form>
+                  <div className="mb-3">
+                    <label className="form-label">BPM</label>
+                    <input
+                      type="number"
+                      className="form-control"
+                      value={bpm}
+                      onChange={(e) => setBpm(Number(e.target.value))}
+                      min="20"
+                      max="280"
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <label className="form-label">Scale</label>
+                    <select
+                      className="form-select"
+                      value={scale}
+                      onChange={(e) => setScale(e.target.value)}
+                    >
+                      {NOTES.map((note) =>
+                        MODES.map((mode) => (
+                          <option
+                            key={`${note} ${mode}`}
+                            value={`${note} ${mode}`}
+                          >
+                            {note} {mode}
+                          </option>
+                        ))
+                      )}
+                    </select>
+                  </div>
+                  <div className="d-flex gap-2">
+                    <button
+                      className="btn btn-primary"
+                      onClick={handleSaveBpmScale}
+                    >
+                      <i className="bi bi-check-lg me-1"></i> Save
+                    </button>
+                    <button
+                      className="btn btn-secondary"
+                      onClick={() => setIsEditingBpmScale(false)}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </form>
+              ) : (
+                <div className="d-flex flex-column gap-3">
+                  <div>
+                    <small className="text-muted d-block">BPM</small>
+                    <span className="fs-5">{bpm}</span>
+                  </div>
+                  <div>
+                    <small className="text-muted d-block">Scale</small>
+                    <span className="fs-5">{scale}</span>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Section Lyrics */}
+        <div className="col-md-6">
+          <div className="card shadow h-100">
+            <CardHeader
+              title={"Lyrics"}
+              icon={"bi-file-text"}
+              actionButton={
+                <button className="btn btn-primary btn-sm rounded-pill">
+                  <i
+                    className={`bi bi-${isEditingLyrics ? "x" : "pencil"} me-1`}
+                  ></i>
+                  {isEditingLyrics ? "Cancel" : "Edit"}
+                </button>
+              }
+              onAction={() => setIsEditingLyrics(!isEditingLyrics)}
+            />
+            <div className="card-body">
+              {isEditingLyrics ? (
+                <>
+                  <Quill
+                    value={lyrics}
+                    onChange={setLyrics}
+                    placeholder="Write your lyrics here..."
+                    className="quill-editor mb-3"
+                  />
+                  <button
+                    className="btn btn-primary"
+                    onClick={handleLyricsSave}
+                  >
+                    <i className="bi bi-check-lg me-1"></i> Save
+                  </button>
+                </>
+              ) : (
+                <div className="lyrics-content">
+                  {lyrics ? (
+                    <div dangerouslySetInnerHTML={{ __html: lyrics }}></div>
+                  ) : (
+                    <p className="text-muted">No lyrics available</p>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Section Tablatures */}
+        <div className="col-12">
+          <div className="card shadow">
+            <CardHeader
+              title={"Tablatures"}
+              icon={"bi-file-music"}
+              actionButton={
+                <button className="btn btn-primary btn-sm rounded-pill">
+                  <i className="bi bi-plus-lg me-1"></i> Create
+                </button>
+              }
+              onAction={() => navigate(`/tablatures/create/${song.song.id}`)}
+            />
+            <div className="card-body">
+              {song.tablatures.length > 0 ? (
+                <div className="row g-3">
+                  {song.tablatures.map((tab) => (
+                    <div key={tab.id} className="col-md-6">
+                      <div className="card h-100">
+                        <div className="card-body">
+                          <div className="d-flex justify-content-between align-items-center">
+                            <div
+                              className="d-flex align-items-center"
+                              onClick={() =>
+                                navigate(
+                                  `/tablatures/update/${tab.id}/${song.song.id}`
+                                )
+                              }
+                              style={{ cursor: "pointer" }}
+                            >
+                              <i className="bi bi-file-music me-2 text-primary"></i>
+                              <h6 className="mb-0">{tab.title}</h6>
+                            </div>
+                            <button
+                              className="btn btn-outline-danger btn-sm rounded-pill"
+                              onClick={() => handleDeleteTablature(tab.id)}
+                            >
+                              <i className="bi bi-trash"></i>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-4">
+                  <i className="bi bi-file-music display-4 text-muted"></i>
+                  <p className="text-muted mt-2">No tablatures available</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Section Audio Files */}
+        <div className="col-12">
+          <div className="card shadow">
+            <div className="card-header border-0">
+              <ul className="nav nav-pills">
+                {song.audioFileTypes.map((type) => (
+                  <li key={type.id} className="nav-item">
+                    <button
+                      className={`nav-link ${
+                        activeTab === type.id ? "active" : ""
+                      }`}
+                      onClick={() => setActiveTab(type.id)}
+                    >
+                      {type.name}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="card-body">
+              {song.audioFileTypes.map(
+                (type) =>
+                  activeTab === type.id && (
+                    <div key={type.id}>
+                      {song.audioFiles.filter(
+                        (audio) => audio.audioFileType.name === type.name
+                      ).length === 0 ? (
+                        <div className="text-center py-4">
+                          <i className="bi bi-music-note-beamed display-4 text-muted"></i>
+                          <p className="text-muted mt-2">
+                            No audio files available
+                          </p>
+                        </div>
+                      ) : (
+                        <div className="row g-3">
+                          {song.audioFiles
+                            .filter(
+                              (audio) => audio.audioFileType.name === type.name
+                            )
+                            .map((audio) => (
+                              <div key={audio.id} className="col-12">
+                                <div className="card">
+                                  <div className="card-body">
+                                    <div className="row g-3">
+                                      <div className="col-md-6">
+                                        {audioUrls[audio.id] ? (
+                                          <audio controls className="w-100">
+                                            <source
+                                              src={audioUrls[audio.id]}
+                                              type="audio/mpeg"
+                                            />
+                                            Your browser does not support the
+                                            audio element.
+                                          </audio>
+                                        ) : (
+                                          <div className="text-center">
+                                            <div
+                                              className="spinner-border text-primary"
+                                              role="status"
+                                            >
+                                              <span className="visually-hidden">
+                                                Loading...
+                                              </span>
+                                            </div>
+                                          </div>
+                                        )}
+                                      </div>
+                                      <div className="col-md-6">
+                                        <div className="mb-3">
+                                          <label className="form-label">
+                                            Description
+                                          </label>
+                                          <input
+                                            type="text"
+                                            className="form-control"
+                                            value={
+                                              audioDescriptions[audio.id] || ""
+                                            }
+                                            onChange={(e) =>
+                                              handleDescriptionChange(
+                                                audio.id,
+                                                e.target.value
+                                              )
+                                            }
+                                            placeholder="Add a description..."
+                                          />
+                                        </div>
+                                        <div className="mb-3">
+                                          <label className="form-label">
+                                            Type
+                                          </label>
+                                          <select
+                                            className="form-select"
+                                            value={
+                                              audio.audioFileType
+                                                ? audio.audioFileType.id
+                                                : ""
+                                            }
+                                            onChange={(e) =>
+                                              handleAudioTypeChange(
+                                                audio.id,
+                                                e.target.value
+                                              )
+                                            }
+                                          >
+                                            {song.audioFileTypes.map((type) => (
+                                              <option
+                                                key={type.id}
+                                                value={type.id}
+                                                selected={
+                                                  type.name ===
+                                                  audio.audioFileType.name
+                                                }
+                                              >
+                                                {type.name}
+                                              </option>
+                                            ))}
+                                          </select>
+                                        </div>
+                                        <div className="d-flex gap-2">
+                                          <button
+                                            className="btn btn-primary btn-sm"
+                                            onClick={() =>
+                                              handleUpdateAudioDescription(
+                                                audio.id
+                                              )
+                                            }
+                                          >
+                                            <i className="bi bi-check-lg me-1"></i>{" "}
+                                            Update
+                                          </button>
+                                          <button
+                                            className="btn btn-outline-primary btn-sm"
+                                            onClick={() =>
+                                              handleDownloadAudio(
+                                                audio.id,
+                                                audio.audioFileType.name
+                                              )
+                                            }
+                                          >
+                                            <i className="bi bi-download me-1"></i>{" "}
+                                            Download
+                                          </button>
+                                          <button
+                                            className="btn btn-outline-danger btn-sm ms-auto"
+                                            onClick={() =>
+                                              handleDeleteAudioFile(audio.id)
+                                            }
+                                          >
+                                            <i className="bi bi-trash"></i>
+                                          </button>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                        </div>
+                      )}
+                    </div>
+                  )
+              )}
+              <div
+                {...getRootProps()}
+                className="mt-4 border border-primary border-dashed rounded p-4 text-center"
+                style={{ cursor: "pointer" }}
+              >
+                <input {...getInputProps()} />
+                <i className="bi bi-cloud-upload display-4 text-primary"></i>
+                <p className="mt-2 mb-0">
+                  Drag and drop audio files here or click to upload
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
+
       <Toast
         message={toastMessage}
         type={toastType}

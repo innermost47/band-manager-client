@@ -16,6 +16,36 @@ export const songService = {
     await api.get(audioFilePath, {
       responseType: "blob",
     }),
+  getAudioFileUrlForStream: async (signedUrl) => {
+    try {
+      const response = await fetch(signedUrl);
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const reader = response.body.getReader();
+      const stream = new ReadableStream({
+        start(controller) {
+          function push() {
+            reader.read().then(({ done, value }) => {
+              if (done) {
+                controller.close();
+                return;
+              }
+              controller.enqueue(value);
+              push();
+            });
+          }
+          push();
+        },
+      });
+      const streamedResponse = new Response(stream);
+      const audioUrl = URL.createObjectURL(streamedResponse.body);
+      return audioUrl;
+    } catch (error) {
+      console.error("Erreur lors du téléchargement en streaming:", error);
+      throw error;
+    }
+  },
 };
 
 export default songService;

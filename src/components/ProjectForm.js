@@ -6,6 +6,7 @@ const ProjectForm = ({ project, onSave, onDelete, onCancel }) => {
   const [name, setName] = useState(project?.name || "");
   const [description, setDescription] = useState(project?.description || "");
   const [error, setError] = useState("");
+  const [isPublic, setIsPublic] = useState(project?.isPublic || false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -19,6 +20,7 @@ const ProjectForm = ({ project, onSave, onDelete, onCancel }) => {
       const data = {
         name,
         description,
+        isPublic,
       };
 
       if (project) {
@@ -60,49 +62,121 @@ const ProjectForm = ({ project, onSave, onDelete, onCancel }) => {
   };
 
   return (
-    <div className="container mt-5">
-      <h2 className="text-center">
-        {project ? "Edit Project" : "Create Project"}
-      </h2>
-      <form onSubmit={handleSubmit} className="mt-4">
-        {error && <div className="alert alert-danger">{error}</div>}
-        <div className="mb-3">
-          <label className="form-label">Project Name</label>
-          <input
-            type="text"
-            className="form-control"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-            placeholder="Enter project name"
-          />
+    <div className="mt-4 mb-4">
+      <div className="card shadow-sm">
+        <div className="card-header">
+          <div className="text-center">
+            <div
+              className="rounded-circle bg-primary bg-opacity-10 d-inline-flex align-items-center justify-content-center mb-3 mt-2"
+              style={{ width: "64px", height: "64px" }}
+            >
+              <i
+                className={`bi ${
+                  project ? "bi-pencil-square" : "bi-folder-plus"
+                } fs-2 text-primary`}
+              ></i>
+            </div>
+            <h4 className="mb-2">
+              {project ? "Edit Project" : "Create New Project"}
+            </h4>
+          </div>
         </div>
-        <div className="mb-3">
-          <label className="form-label">Description</label>
-          <textarea
-            className="form-control"
-            rows="4"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder="Enter project description"
-          ></textarea>
+
+        <div className="card-body p-4">
+          <form onSubmit={handleSubmit}>
+            {error && (
+              <div className="alert alert-danger d-flex align-items-center">
+                <i className="bi bi-exclamation-circle me-2"></i>
+                {error}
+              </div>
+            )}
+
+            <div className="mb-4">
+              <label className="form-label text-muted small">
+                Project Name
+              </label>
+              <div className="input-group">
+                <span className="input-group-text">
+                  <i className="bi bi-pencil text-primary"></i>
+                </span>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required
+                  placeholder="Enter your project name..."
+                />
+              </div>
+            </div>
+
+            <div className="mb-4">
+              <label className="form-label text-muted small">Description</label>
+              <div className="input-group">
+                <span className="input-group-text">
+                  <i className="bi bi-textarea-resize text-primary"></i>
+                </span>
+                <textarea
+                  className="form-control"
+                  rows="4"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="Describe your project..."
+                ></textarea>
+              </div>
+            </div>
+
+            <div className="mb-4 rounded p-3 border">
+              <div className="d-flex align-items-center justify-content-between">
+                <div>
+                  <h6 className="mb-1">Public Visibility</h6>
+                  <p className="text-muted small mb-0">
+                    Make this project visible to everyone
+                  </p>
+                </div>
+                <div className="form-check form-switch">
+                  <input
+                    type="checkbox"
+                    id="isPublic"
+                    className="form-check-input"
+                    checked={isPublic}
+                    onChange={() => setIsPublic(!isPublic)}
+                    role="switch"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="d-flex gap-2 justify-content-end">
+              {project && (
+                <button
+                  type="button"
+                  className="btn btn-outline-danger btn-sm"
+                  onClick={handleDelete}
+                >
+                  <i className="bi bi-trash me-2"></i>
+                  Delete
+                </button>
+              )}
+              <button
+                type="button"
+                className="btn btn-secondary btn-sm"
+                onClick={onCancel}
+              >
+                Cancel
+              </button>
+              <button type="submit" className="btn btn-primary  btn-sm">
+                <i
+                  className={`bi ${
+                    project ? "bi-check-lg" : "bi-plus-lg"
+                  } me-2`}
+                ></i>
+                {project ? "Save Changes" : "Create Project"}
+              </button>
+            </div>
+          </form>
         </div>
-        <button type="submit" className="btn btn-primary me-2">
-          {project ? "Update Project" : "Create Project"}
-        </button>
-        {project && (
-          <button
-            type="button"
-            className="btn btn-danger me-2"
-            onClick={handleDelete}
-          >
-            Delete Project
-          </button>
-        )}
-        <button type="button" className="btn btn-secondary" onClick={onCancel}>
-          Cancel
-        </button>
-      </form>
+      </div>
     </div>
   );
 };
