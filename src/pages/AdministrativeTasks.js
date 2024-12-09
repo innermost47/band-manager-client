@@ -123,9 +123,20 @@ const AdministrativeTasks = () => {
           </div>
         </div>
       ) : tasks.length === 0 ? (
-        <div className="alert alert-info text-center">
-          <i className="bi bi-info-circle me-2"></i>
-          No administrative tasks available. Create one!
+        <div className="text-center py-5">
+          <i className="bi bi-clipboard-x display-3 text-muted"></i>
+          <h4 className="text-muted fw-light mb-3">No administrative tasks</h4>
+          <p className="text-secondary mb-4">
+            Get started by creating your first administrative task
+          </p>
+          <button
+            className="btn btn-primary rounded-pill"
+            onClick={() => setShowCreator(true)}
+            disabled={showCreator}
+          >
+            <i className="bi bi-plus-circle me-2"></i>
+            Create New Task
+          </button>
         </div>
       ) : (
         <div className="card shadow">

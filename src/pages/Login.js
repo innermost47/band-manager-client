@@ -72,7 +72,7 @@ const Login = () => {
       <div className="card shadow-sm" style={{ maxWidth: "400px" }}>
         <div className="card-body p-4">
           <div className="text-center mb-4">
-            <img src="/logo.png" alt="logo" className="w-50 mb-4" />
+            <img src="/logo.png" alt="logo" className="w-75 mb-3" />
             <h4 className="mb-1">Welcome Back!</h4>
             <p className="text-muted small">
               Sign in to continue to your account
