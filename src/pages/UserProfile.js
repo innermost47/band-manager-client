@@ -26,7 +26,6 @@ const RoleDisplay = ({ roles }) => {
   };
 
   if (!roles?.length) return <span className="text-muted">N/A</span>;
-  console.log(roles);
 
   return (
     <div className="d-flex flex-wrap gap-2 mt-1">
@@ -281,7 +280,7 @@ const UserProfile = () => {
             </div>
           </div>
         </div>
-      ) : (
+      ) : userProfile ? (
         <>
           {isEditing && (
             <ProfileForm
@@ -472,6 +471,14 @@ const UserProfile = () => {
             handleDeclineInvitation={handleDeclineInvitation}
           />
         </>
+      ) : (
+        <div className="card shadow">
+          <div className="card-body text-center">
+            <i className="bi bi-exclamation-circle text-warning fs-1 mb-3"></i>
+            <h5>Profile Not Found</h5>
+            <p className="text-muted">Unable to load profile information.</p>
+          </div>
+        </div>
       )}
       <Toast
         message={toastMessage}

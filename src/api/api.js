@@ -2,6 +2,32 @@ import axios from "axios";
 
 export const API_BASE_URL = process.env.REACT_APP_API_URL;
 
+let isRedirecting = false;
+
+let navigationCallback = (options) => {
+  if (!isRedirecting) {
+    isRedirecting = true;
+    window.location.href = "/login";
+    // Reset après la redirection
+    setTimeout(() => {
+      isRedirecting = false;
+    }, 100);
+  }
+};
+
+export const setNavigationCallback = (callback) => {
+  navigationCallback = (options) => {
+    if (!isRedirecting) {
+      isRedirecting = true;
+      callback(options);
+      // Reset après la redirection
+      setTimeout(() => {
+        isRedirecting = false;
+      }, 100);
+    }
+  };
+};
+
 const api = axios.create({
   baseURL: API_BASE_URL,
 });
@@ -16,32 +42,21 @@ api.interceptors.request.use((config) => {
 
 api.interceptors.response.use(
   (response) => {
-    const newToken = response.headers?.authorization;
-    if (newToken) {
-      const token = newToken.replace("Bearer ", "");
-      localStorage.setItem("token", token);
-    }
+    isRedirecting = false;
     return response;
   },
-  async (error) => {
-    const originalRequest = error.config;
+  (error) => {
     if (
       error.response?.status === 401 &&
-      !originalRequest._retry &&
-      !originalRequest.url.includes("/login")
+      !error.config.url.includes("/login")
     ) {
-      originalRequest._retry = true;
-      const newToken = error.response.headers?.authorization;
-      if (newToken) {
-        const token = newToken.replace("Bearer ", "");
-        localStorage.setItem("token", token);
-        originalRequest.headers.Authorization = `Bearer ${token}`;
-        return api(originalRequest);
-      }
       localStorage.removeItem("token");
-      window.location.href = "/";
+      navigationCallback({
+        state: { error: "Your session has expired. Please log in again." },
+      });
     }
     return Promise.reject(error);
   }
 );
+
 export default api;

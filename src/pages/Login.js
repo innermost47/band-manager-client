@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { loginService } from "../api/loginService";
 
 const Login = () => {
@@ -8,6 +8,7 @@ const Login = () => {
   const [error, setError] = useState("");
   const [showLoader, setLoader] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -66,6 +67,12 @@ const Login = () => {
       setLoader(false);
     }
   };
+
+  useEffect(() => {
+    if (location.state?.error) {
+      setError(location.state.error);
+    }
+  }, [location]);
 
   return (
     <div className="min-vh-100 d-flex justify-content-center align-items-center p-5">

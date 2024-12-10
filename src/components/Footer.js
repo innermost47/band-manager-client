@@ -17,12 +17,12 @@ const Footer = () => {
         <span className="text-muted">
           <button
             onClick={() => navigate("/legals")}
-            className="btn btn-link text-muted text-decoration-none p-0 mx-2"
+            className="btn btn-link text-muted text-decoration-none p-0 mx-2 btn-sm"
           >
             Legal Terms & Privacy Policy
           </button>
         </span>
-        <p className="text-muted mt-2 mb-0">
+        <p className="text-muted mt-2 mb-0 small">
           © {currentYear} {process.env.REACT_APP_COMPANY_NAME}. All rights
           reserved.
         </p>
