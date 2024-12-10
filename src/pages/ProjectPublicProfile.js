@@ -5,6 +5,9 @@ import AudioPlayerComponent from "../components/AudioPlayerComponent";
 import { API_BASE_URL } from "../api/api";
 import Toast from "../components/Toast";
 import CardHeader from "../components/CardHeader";
+import { format } from "date-fns";
+import { eventService } from "../api/eventService";
+import EventList from "../components/EventList";
 
 const ProjectPublicProfile = () => {
   const { id } = useParams();
@@ -16,6 +19,8 @@ const ProjectPublicProfile = () => {
   const [audioUrls, setAudioUrls] = useState({});
   const [toastMessage, setToastMessage] = useState(null);
   const [toastType, setToastType] = useState("success");
+  const [events, setEvents] = useState([]);
+  const [isLoadingEvents, setIsLoadingEvents] = useState(true);
   const navigate = useNavigate();
 
   const getProfileImageFile = useCallback(async (filePath) => {
@@ -60,9 +65,20 @@ const ProjectPublicProfile = () => {
         }
         setAudioUrls(audioFiles);
         setIsLoadingAudio(false);
+        try {
+          const eventsResponse = await eventService.getPublicEventsByProject(
+            id
+          );
+          setEvents(eventsResponse.data);
+        } catch (error) {
+          console.error("Error fetching events:", error);
+          showToast("Error fetching events.", "error");
+        }
+        setIsLoadingEvents(false);
       } catch (error) {
         console.error("Error fetching project details:", error);
         setIsLoadingProfileImage(false);
+        setIsLoadingEvents(false);
       }
     };
     fetchProject();
@@ -188,6 +204,12 @@ const ProjectPublicProfile = () => {
           ) : (
             <AudioPlayerComponent audioUrls={audioUrls} />
           )}
+        </div>
+      </div>
+      <div className="card shadow-sm mt-3">
+        <CardHeader title="Upcoming Events" icon="bi-calendar-event" />
+        <div className="card-body">
+          <EventList events={events} isLoading={isLoadingEvents} />
         </div>
       </div>
       <Toast

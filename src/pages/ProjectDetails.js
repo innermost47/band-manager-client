@@ -8,6 +8,9 @@ import { confirmAlert } from "react-confirm-alert";
 import Toast from "../components/Toast";
 import { API_BASE_URL } from "../api/api";
 import CardHeader from "../components/CardHeader";
+import EventForm from "../components/EventForm";
+import { eventService } from "../api/eventService";
+import EventCard from "../components/EventCard";
 
 const ProjectDetails = () => {
   const { id } = useParams();
@@ -24,6 +27,9 @@ const ProjectDetails = () => {
   const [toastMessage, setToastMessage] = useState(null);
   const [toastType, setToastType] = useState("success");
   const songFormRef = useRef(null);
+  const [events, setEvents] = useState([]);
+  const [selectedEvent, setSelectedEvent] = useState(null);
+  const [isEventFormVisible, setIsEventFormVisible] = useState(false);
   const navigate = useNavigate();
 
   const getProfileImageFile = useCallback(async (filePath) => {
@@ -93,6 +99,35 @@ const ProjectDetails = () => {
     setToastMessage(message);
     setToastType(type);
     setTimeout(() => setToastMessage(null), 3000);
+  };
+
+  const loadEvents = async () => {
+    try {
+      const response = await eventService.getByProject(id);
+      setEvents(response.data);
+    } catch (error) {
+      console.error("Error loading events:", error);
+      showToast("Error loading events", "error");
+    }
+  };
+
+  useEffect(() => {
+    loadEvents();
+  }, [id]);
+
+  const handleAddEvent = () => {
+    setSelectedEvent(null);
+    setIsEventFormVisible(true);
+  };
+
+  const handleEditEvent = (event) => {
+    setSelectedEvent(event);
+    setIsEventFormVisible(true);
+  };
+
+  const handleEventFormCancel = () => {
+    setIsEventFormVisible(false);
+    setSelectedEvent(null);
   };
 
   const refreshProject = async () => {
@@ -412,6 +447,65 @@ const ProjectDetails = () => {
                   <p className="text-muted mt-2">No songs added yet</p>
                 </div>
               )}
+            </div>
+          </div>
+
+          <div className="col-lg-12">
+            <div className="card shadow-sm mb-3">
+              <CardHeader
+                title="Events"
+                icon="bi-calendar-event"
+                actionButton={
+                  <>
+                    <i className="bi bi-plus-lg me-2"></i>
+                    Add Event
+                  </>
+                }
+                onAction={handleAddEvent}
+                isDisabled={isEventFormVisible}
+              />
+              <div className="card-body">
+                {isEventFormVisible && (
+                  <div className="mb-4">
+                    <EventForm
+                      event={selectedEvent}
+                      projectId={project.id}
+                      onSave={() => {
+                        setIsEventFormVisible(false);
+                        loadEvents();
+                        showToast(
+                          `Event ${
+                            selectedEvent ? "updated" : "created"
+                          } successfully`
+                        );
+                      }}
+                      onDelete={() => {
+                        setIsEventFormVisible(false);
+                        loadEvents();
+                        showToast("Event deleted successfully");
+                      }}
+                      onCancel={handleEventFormCancel}
+                    />
+                  </div>
+                )}
+
+                {events.length > 0 ? (
+                  <div className="row">
+                    {events.map((event) => (
+                      <EventCard
+                        key={event.id}
+                        event={event}
+                        onEdit={handleEditEvent}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-5">
+                    <i className="bi bi-calendar3 display-4 text-muted"></i>
+                    <p className="text-muted mt-2">No events scheduled yet</p>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
