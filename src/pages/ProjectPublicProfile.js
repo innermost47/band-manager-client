@@ -3,11 +3,10 @@ import { useParams, useNavigate } from "react-router-dom";
 import { projectService } from "../api/projectService";
 import AudioPlayerComponent from "../components/AudioPlayerComponent";
 import { API_BASE_URL } from "../api/api";
-import Toast from "../components/Toast";
 import CardHeader from "../components/CardHeader";
-import { format } from "date-fns";
 import { eventService } from "../api/eventService";
 import EventList from "../components/EventList";
+import { useToast } from "../components/ToastContext";
 
 const ProjectPublicProfile = () => {
   const { id } = useParams();
@@ -17,8 +16,7 @@ const ProjectPublicProfile = () => {
   const [isLoadingAudio, setIsLoadingAudio] = useState(true);
   const [isLoadingProfileImage, setIsLoadingProfileImage] = useState(true);
   const [audioUrls, setAudioUrls] = useState({});
-  const [toastMessage, setToastMessage] = useState(null);
-  const [toastType, setToastType] = useState("success");
+  const { showToast } = useToast();
   const [events, setEvents] = useState([]);
   const [isLoadingEvents, setIsLoadingEvents] = useState(true);
   const navigate = useNavigate();
@@ -83,12 +81,6 @@ const ProjectPublicProfile = () => {
     };
     fetchProject();
   }, [id, getProfileImageFile]);
-
-  const showToast = (message, type = "success") => {
-    setToastMessage(message);
-    setToastType(type);
-    setTimeout(() => setToastMessage(null), 3000);
-  };
 
   if (!project) {
     return (
@@ -212,11 +204,6 @@ const ProjectPublicProfile = () => {
           <EventList events={events} isLoading={isLoadingEvents} />
         </div>
       </div>
-      <Toast
-        message={toastMessage}
-        type={toastType}
-        onClose={() => setToastMessage(null)}
-      />
     </div>
   );
 };

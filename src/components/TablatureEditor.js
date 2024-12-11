@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
 import VexTabEditor from "./VexTabEditor";
-import Toast from "../components/Toast";
+import { useToast } from "./ToastContext";
 
 const TablatureEditor = ({ content, onSave, isUpdate }) => {
   const [currentContent, setCurrentContent] = useState(content || "");
-  const [toastMessage, setToastMessage] = useState(null);
-  const [toastType, setToastType] = useState("success");
+  const { showToast } = useToast();
 
   useEffect(() => {
     setCurrentContent(content);
@@ -13,12 +12,6 @@ const TablatureEditor = ({ content, onSave, isUpdate }) => {
 
   const handleContentChange = (e) => {
     setCurrentContent(e.target.value);
-  };
-
-  const showToast = (message, type = "success") => {
-    setToastMessage(message);
-    setToastType(type);
-    setTimeout(() => setToastMessage(null), 3000);
   };
 
   const handleSave = () => {
@@ -74,12 +67,6 @@ const TablatureEditor = ({ content, onSave, isUpdate }) => {
           </button>
         </div>
       </div>
-
-      <Toast
-        message={toastMessage}
-        type={toastType}
-        onClose={() => setToastMessage(null)}
-      />
     </div>
   );
 };

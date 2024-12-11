@@ -1,14 +1,14 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { userService } from "../api/userService";
+import { useToast } from "../components/ToastContext";
 
 const SignUp = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError] = useState("");
-  const [message, setMessage] = useState("");
+  const { showToast } = useToast();
   const [showLoader, setLoader] = useState(false);
   const [passwordValidation, setPasswordValidation] = useState({
     length: false,
@@ -67,7 +67,7 @@ const SignUp = () => {
     const { length, alphaNumeric, specialCharacter, match } =
       passwordValidation;
     if (!length || !alphaNumeric || !specialCharacter || !match) {
-      setError("Please meet all password requirements.");
+      showToast("Please meet all password requirements.", "error");
       return;
     }
 
@@ -85,12 +85,15 @@ const SignUp = () => {
         "User created successfully. Verification code sent to email."
       ) {
         console.log("Redirecting to email verification...");
-        setMessage("A verification code has been sent to your email.");
+        showToast(
+          "A verification code has been sent to your email.",
+          "success"
+        );
         navigate("/verify-email", { state: { email } });
       }
     } catch (error) {
       console.error("Error occurred:", error);
-      setError(error.response?.data?.error || "An error occurred");
+      showToast(error.response?.data?.error || "An error occurred", "error");
     } finally {
       setLoader(false);
     }
@@ -114,19 +117,6 @@ const SignUp = () => {
           </div>
 
           <form onSubmit={handleSignUp}>
-            {error && (
-              <div className="alert alert-danger d-flex align-items-center">
-                <i className="bi bi-exclamation-circle me-2"></i>
-                {error}
-              </div>
-            )}
-            {message && (
-              <div className="alert alert-success d-flex align-items-center">
-                <i className="bi bi-check-circle me-2"></i>
-                {message}
-              </div>
-            )}
-
             <div className="mb-3">
               <label className="form-label text-muted small">Username</label>
               <div className="input-group">

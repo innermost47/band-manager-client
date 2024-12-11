@@ -3,9 +3,15 @@ import { confirmAlert } from "react-confirm-alert";
 import { COLUMN_TYPES } from "../config/constants";
 
 const AdministrativeTable = ({ task, onUpdate, onDelete }) => {
-  const [tableStructure, setTableStructure] = useState(
-    task.tableStructure || { columns: [], columnTypes: [] }
-  );
+  const [tableStructure, setTableStructure] = useState(() => {
+    return (
+      task.tableStructure || {
+        columns: [],
+        columnTypes: [],
+        columnsToTotal: {},
+      }
+    );
+  });
   const [columnTypes, setColumnTypes] = useState(() => {
     if (task.tableStructure?.columnTypes?.length > 0) {
       return task.tableStructure.columnTypes;

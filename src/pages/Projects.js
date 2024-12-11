@@ -2,8 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { projectService } from "../api/projectService";
 import ProjectForm from "../components/ProjectForm";
-import Toast from "../components/Toast";
 import CardHeader from "../components/CardHeader";
+import { useToast } from "../components/ToastContext";
 
 const Projects = () => {
   const [projects, setProjects] = useState([]);
@@ -11,8 +11,7 @@ const Projects = () => {
   const [selectedProject, setSelectedProject] = useState(null);
   const [isFormVisible, setIsFormVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [toastMessage, setToastMessage] = useState(null);
-  const [toastType, setToastType] = useState("success");
+  const { showToast } = useToast();
   const projectFormRef = useRef(null);
   const navigate = useNavigate();
 
@@ -37,12 +36,6 @@ const Projects = () => {
 
     fetchProjects();
   }, []);
-
-  const showToast = (message, type = "success") => {
-    setToastMessage(message);
-    setToastType(type);
-    setTimeout(() => setToastMessage(null), 3000);
-  };
 
   const handleFormSave = async () => {
     try {
@@ -291,11 +284,6 @@ const Projects = () => {
           </div>
         </>
       )}
-      <Toast
-        message={toastMessage}
-        type={toastType}
-        onClose={() => setToastMessage(null)}
-      />
     </div>
   );
 };

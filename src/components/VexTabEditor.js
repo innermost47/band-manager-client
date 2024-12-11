@@ -8,8 +8,6 @@ const VexTabEditor = ({ content }) => {
     if (containerRef.current) {
       const tabDOM = containerRef.current;
       tabDOM.innerHTML = "";
-
-      // Obtenir la largeur du conteneur parent
       const containerWidth = tabDOM.parentElement.clientWidth;
 
       const renderer = new Vex.Flow.Renderer(
@@ -17,13 +15,11 @@ const VexTabEditor = ({ content }) => {
         Vex.Flow.Renderer.Backends.SVG
       );
 
-      // Définir une largeur responsive
       renderer.resize(containerWidth, "auto");
 
-      // Ajuster la largeur dans Artist aussi
       const artist = new Artist(10, 10, containerWidth - 20, {
         scale: 0.8,
-        width: containerWidth - 20, // Soustraire un peu pour les marges
+        width: containerWidth - 20,
       });
 
       const tab = new VexTab(artist);
@@ -31,8 +27,6 @@ const VexTabEditor = ({ content }) => {
       try {
         tab.parse(content);
         artist.render(renderer);
-
-        // Trouver le SVG et le rendre responsive
         const svg = tabDOM.querySelector("svg");
         if (svg) {
           svg.setAttribute("width", "100%");

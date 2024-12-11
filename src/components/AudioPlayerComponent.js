@@ -50,6 +50,7 @@ const AudioPlayerComponent = ({ audioUrls }) => {
   if (!Array.isArray(audioUrls) || audioUrls.length === 0) {
     return (
       <div className="card shadow-sm">
+        <CardHeader title={"Audio Player"} icon={"bi-music-note-beamed"} />
         <div className="card-body p-5">
           <div className="text-center">
             <div

@@ -6,9 +6,9 @@ import { useDropzone } from "react-dropzone";
 import "react-quill/dist/quill.snow.css";
 import Quill from "../components/Quill";
 import { confirmAlert } from "react-confirm-alert";
-import Toast from "../components/Toast";
 import { tablatureService } from "../api/tablatureService";
 import CardHeader from "../components/CardHeader";
+import { useToast } from "../components/ToastContext";
 
 const NOTES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
 const MODES = [
@@ -32,8 +32,7 @@ const SongDetails = () => {
   const [activeTab, setActiveTab] = useState("");
   const [isEditingLyrics, setIsEditingLyrics] = useState(false);
   const [audioDescriptions, setAudioDescriptions] = useState({});
-  const [toastMessage, setToastMessage] = useState(null);
-  const [toastType, setToastType] = useState("success");
+  const { showToast } = useToast();
   const [audioUrls, setAudioUrls] = useState({});
 
   useEffect(() => {
@@ -64,19 +63,15 @@ const SongDetails = () => {
     fetchSong();
   }, [id]);
 
-  const showToast = (message, type = "success") => {
-    setToastMessage(message);
-    setToastType(type);
-    setTimeout(() => setToastMessage(null), 3000);
-  };
-
   const handleSaveBpmScale = async (e) => {
     try {
       e.preventDefault();
       await songService.updateSong(song.song.id, { bpm, scale });
       setIsEditingBpmScale(false);
+      showToast("BPM and scale updated successfully", "success");
     } catch (error) {
       console.error("Error updating BPM and scale:", error);
+      showToast("Error updating BPM and scale", "error");
     }
   };
 
@@ -155,14 +150,15 @@ const SongDetails = () => {
       setIsEditingLyrics(false);
       const response = await songService.getSong(id);
       setSong(response.data);
+      showToast("Lyrics updated successfully", "success");
     } catch (error) {
       console.error("Error saving lyrics:", error);
+      showToast("Error updating lyrics", "error");
     }
   };
 
   const handleDrop = async (acceptedFiles) => {
-    setToastMessage("Uploading files...");
-    setToastType("loading");
+    showToast("Uploading files...", "loading");
     try {
       const formData = new FormData();
       acceptedFiles.forEach((file) => {
@@ -173,8 +169,7 @@ const SongDetails = () => {
       await songService.uploadAudioFiles(formData);
       const response = await songService.getSong(id);
       setSong(response.data);
-      setToastMessage("Audio files uploaded successfully!");
-      setToastType("success");
+      showToast("Audio files uploaded successfully!", "success");
       const audioFileUrls = {};
       for (const audio of response.data.audioFiles) {
         audioFileUrls[audio.id] = API_BASE_URL + "/" + audio.signed_url;
@@ -182,8 +177,7 @@ const SongDetails = () => {
       setAudioUrls(audioFileUrls);
     } catch (error) {
       console.error("Error uploading audio files:", error);
-      setToastMessage("Failed to upload audio files. Please try again.");
-      setToastType("error");
+      showToast("Failed to upload audio files. Please try again.", "error");
     }
   };
 
@@ -695,12 +689,6 @@ const SongDetails = () => {
           </div>
         </div>
       </div>
-
-      <Toast
-        message={toastMessage}
-        type={toastType}
-        onClose={() => setToastMessage(null)}
-      />
     </div>
   );
 };

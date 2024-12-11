@@ -8,7 +8,6 @@ let navigationCallback = (options) => {
   if (!isRedirecting) {
     isRedirecting = true;
     window.location.href = "/login";
-    // Reset après la redirection
     setTimeout(() => {
       isRedirecting = false;
     }, 100);
@@ -20,7 +19,6 @@ export const setNavigationCallback = (callback) => {
     if (!isRedirecting) {
       isRedirecting = true;
       callback(options);
-      // Reset après la redirection
       setTimeout(() => {
         isRedirecting = false;
       }, 100);

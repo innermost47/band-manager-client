@@ -5,12 +5,12 @@ import SongForm from "../components/SongForm";
 import AudioPlayerComponent from "../components/AudioPlayerComponent";
 import songService from "../api/songService";
 import { confirmAlert } from "react-confirm-alert";
-import Toast from "../components/Toast";
 import { API_BASE_URL } from "../api/api";
 import CardHeader from "../components/CardHeader";
 import EventForm from "../components/EventForm";
 import { eventService } from "../api/eventService";
 import EventCard from "../components/EventCard";
+import { useToast } from "../components/ToastContext";
 
 const ProjectDetails = () => {
   const { id } = useParams();
@@ -24,8 +24,7 @@ const ProjectDetails = () => {
   const [audioUrls, setAudioUrls] = useState({});
   const [isLoadingAudio, setIsLoadingAudio] = useState(true);
   const [isLoadingProfileImage, setIsLoadingProfileImage] = useState(true);
-  const [toastMessage, setToastMessage] = useState(null);
-  const [toastType, setToastType] = useState("success");
+  const { showToast } = useToast();
   const songFormRef = useRef(null);
   const [events, setEvents] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
@@ -94,12 +93,6 @@ const ProjectDetails = () => {
     };
     fetchProject();
   }, [id, getAudioFile, getProfileImageFile]);
-
-  const showToast = (message, type = "success") => {
-    setToastMessage(message);
-    setToastType(type);
-    setTimeout(() => setToastMessage(null), 3000);
-  };
 
   const loadEvents = async () => {
     try {
@@ -523,11 +516,6 @@ const ProjectDetails = () => {
           </div>
         </div>
       </div>
-      <Toast
-        message={toastMessage}
-        type={toastType}
-        onClose={() => setToastMessage(null)}
-      />
     </div>
   );
 };

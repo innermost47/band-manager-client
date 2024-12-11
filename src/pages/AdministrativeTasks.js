@@ -2,14 +2,13 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import AdministrativeTaskCreator from "../components/AdministrativeTaskCreator";
 import { administrativeTaskService } from "../api/administrativeTaskService";
-import Toast from "../components/Toast";
 import CardHeader from "../components/CardHeader";
+import { useToast } from "../components/ToastContext";
 
 const AdministrativeTasks = () => {
   const [tasks, setTasks] = useState([]);
   const [projects, setProjects] = useState([]);
-  const [toastMessage, setToastMessage] = useState(null);
-  const [toastType, setToastType] = useState("success");
+  const { showToast } = useToast();
   const [isLoading, setIsLoading] = useState(true);
   const [showCreator, setShowCreator] = useState(false);
   const navigate = useNavigate();
@@ -32,12 +31,6 @@ const AdministrativeTasks = () => {
     };
     fetchAdministrativeTasks();
   }, []);
-
-  const showToast = (message, type = "success") => {
-    setToastMessage(message);
-    setToastType(type);
-    setTimeout(() => setToastMessage(null), 3000);
-  };
 
   const handleCreateTask = async (newTask) => {
     try {
@@ -190,12 +183,6 @@ const AdministrativeTasks = () => {
           </div>
         </div>
       )}
-
-      <Toast
-        message={toastMessage}
-        type={toastType}
-        onClose={() => setToastMessage(null)}
-      />
     </div>
   );
 };

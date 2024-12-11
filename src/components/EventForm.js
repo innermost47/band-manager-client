@@ -1,11 +1,10 @@
 import { useState, useEffect } from "react";
 import { eventService } from "../api/eventService";
 import { confirmAlert } from "react-confirm-alert";
-import Toast from "../components/Toast";
+import { useToast } from "./ToastContext";
 
 const EventForm = ({ event, projectId, onSave, onDelete, onCancel }) => {
-  const [toastMessage, setToastMessage] = useState(null);
-  const [toastType, setToastType] = useState("success");
+  const { showToast } = useToast();
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -66,12 +65,6 @@ const EventForm = ({ event, projectId, onSave, onDelete, onCancel }) => {
       ...prev,
       is_public: !prev.is_public,
     }));
-  };
-
-  const showToast = (message, type = "success") => {
-    setToastMessage(message);
-    setToastType(type);
-    setTimeout(() => setToastMessage(null), 3000);
   };
 
   const handleSubmit = async (e) => {
@@ -377,11 +370,6 @@ const EventForm = ({ event, projectId, onSave, onDelete, onCancel }) => {
           </div>
         </div>
       </div>
-      <Toast
-        message={toastMessage}
-        type={toastType}
-        onClose={() => setToastMessage(null)}
-      />
     </form>
   );
 };

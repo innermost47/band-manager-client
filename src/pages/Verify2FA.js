@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { loginService } from "../api/loginService";
+import { useToast } from "../components/ToastContext";
 
 const Verify2FA = () => {
   const [code, setCode] = useState("");
-  const [error, setError] = useState("");
+  const { showToast } = useToast();
   const [showLoader, setLoader] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
@@ -19,7 +20,7 @@ const Verify2FA = () => {
       localStorage.setItem("token", response.data.token);
       navigate("/dashboard");
     } catch (error) {
-      setError(error.response?.data?.error || "An error occurred");
+      showToast(error.response?.data?.error || "An error occurred", "error");
     } finally {
       setLoader(false);
     }
@@ -44,13 +45,6 @@ const Verify2FA = () => {
           </div>
 
           <form onSubmit={handleVerify}>
-            {error && (
-              <div className="alert alert-danger d-flex align-items-center">
-                <i className="bi bi-exclamation-circle me-2"></i>
-                {error}
-              </div>
-            )}
-
             <div className="mb-4">
               <label className="form-label text-muted small">
                 Verification Code

@@ -27,6 +27,7 @@ import Layout from "./components/Layout";
 import CookieConsent from "./components/CookieConsent";
 import { setNavigationCallback } from "./api/api";
 import { useEffect } from "react";
+import { ToastProvider } from "./components/ToastContext";
 
 const DefaultRoute = () => {
   const isAuthenticated = localStorage.getItem("token");
@@ -38,10 +39,10 @@ const DefaultRoute = () => {
 };
 
 const PublicLayout = ({ children }) => (
-  <>
+  <ToastProvider>
     {children}
     <CookieConsent />
-  </>
+  </ToastProvider>
 );
 
 const AppRoutes = () => {

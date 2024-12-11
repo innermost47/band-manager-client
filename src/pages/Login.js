@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { loginService } from "../api/loginService";
+import { useToast } from "../components/ToastContext";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const { showToast } = useToast();
   const [showLoader, setLoader] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
@@ -13,9 +14,8 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoader(true);
-    setError("");
     if (!email || !password) {
-      setError("Email and password are required");
+      showToast("Email and password are required", "error");
       setLoader(false);
       return;
     }
@@ -38,30 +38,36 @@ const Login = () => {
       if (error.response) {
         switch (error.response.status) {
           case 400:
-            setError(
-              error.response.data.error || "Invalid email or password format"
+            showToast(
+              error.response.data.error || "Invalid email or password format",
+              "error"
             );
             break;
           case 401:
-            setError(error.response.data.error || "Invalid credentials");
+            showToast(
+              error.response.data.error || "Invalid credentials",
+              "error"
+            );
             break;
           case 404:
-            setError("Account not found");
+            showToast("Account not found", "error");
             break;
           case 429:
-            setError("Too many attempts. Please try again later");
+            showToast("Too many attempts. Please try again later", "error");
             break;
           default:
-            setError(
-              error.response.data.error || "An error occurred during login"
+            showToast(
+              error.response.data.error || "An error occurred during login",
+              "error"
             );
         }
       } else if (error.request) {
-        setError(
-          "Unable to connect to the server. Please check your internet connection"
+        showToast(
+          "Unable to connect to the server. Please check your internet connection",
+          "error"
         );
       } else {
-        setError("An unexpected error occurred");
+        showToast("An unexpected error occurred", "error");
       }
     } finally {
       setLoader(false);
@@ -70,7 +76,7 @@ const Login = () => {
 
   useEffect(() => {
     if (location.state?.error) {
-      setError(location.state.error);
+      showToast(location.state.error, "error");
     }
   }, [location]);
 
@@ -87,13 +93,6 @@ const Login = () => {
           </div>
 
           <form onSubmit={handleLogin}>
-            {error && (
-              <div className="alert alert-danger d-flex align-items-center">
-                <i className="bi bi-exclamation-circle me-2"></i>
-                {error}
-              </div>
-            )}
-
             <div className="mb-3">
               <label className="form-label text-muted small">
                 Email Address

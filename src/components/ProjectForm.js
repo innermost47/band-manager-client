@@ -1,18 +1,19 @@
 import { useState } from "react";
 import { projectService } from "../api/projectService";
 import { confirmAlert } from "react-confirm-alert";
+import { useToast } from "./ToastContext";
 
 const ProjectForm = ({ project, onSave, onDelete, onCancel }) => {
   const [name, setName] = useState(project?.name || "");
   const [description, setDescription] = useState(project?.description || "");
-  const [error, setError] = useState("");
+  const { showToast } = useToast();
   const [isPublic, setIsPublic] = useState(project?.isPublic || false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!name.trim()) {
-      setError("Project name is required.");
+      showToast("Project name is required.", "error");
       return;
     }
 
@@ -29,8 +30,15 @@ const ProjectForm = ({ project, onSave, onDelete, onCancel }) => {
         await projectService.createProject(data);
       }
       onSave && onSave();
-    } catch (error) {
-      setError("An error occurred. Please try again.");
+    } catch (err) {
+      if (err.response && err.response.status === 400) {
+        showToast(
+          err.response.data.error || "An error occurred. Please try again.",
+          "error"
+        );
+      } else {
+        showToast("An error occurred. Please try again.", "error");
+      }
     }
   };
 
@@ -49,7 +57,7 @@ const ProjectForm = ({ project, onSave, onDelete, onCancel }) => {
               await projectService.deleteProject(project.id);
               onDelete && onDelete();
             } catch (error) {
-              setError("Failed to delete the project.");
+              showToast("Failed to delete the project.", "error");
             }
           },
         },
@@ -84,13 +92,6 @@ const ProjectForm = ({ project, onSave, onDelete, onCancel }) => {
 
         <div className="card-body p-4">
           <form onSubmit={handleSubmit}>
-            {error && (
-              <div className="alert alert-danger d-flex align-items-center">
-                <i className="bi bi-exclamation-circle me-2"></i>
-                {error}
-              </div>
-            )}
-
             <div className="mb-4">
               <label className="form-label text-muted small">
                 Project Name

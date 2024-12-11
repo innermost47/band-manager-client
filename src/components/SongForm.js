@@ -2,11 +2,12 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { songService } from "../api/songService";
 import { confirmAlert } from "react-confirm-alert";
+import { useToast } from "./ToastContext";
 
 const SongForm = ({ song, onSave, onDelete, onCancel }) => {
   const { id: projectId } = useParams();
   const [title, setTitle] = useState(song ? song.title : "");
-  const [error, setError] = useState("");
+  const { showToast } = useToast();
   const [isPublic, setIsPublic] = useState(song?.isPublic || false);
 
   useEffect(() => {
@@ -18,10 +19,9 @@ const SongForm = ({ song, onSave, onDelete, onCancel }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!title.trim()) {
-      setError("Title is required.");
+      showToast("Title is required.", "error");
       return;
     }
-
     try {
       if (song) {
         await songService.updateSong(song.id, {
@@ -29,6 +29,7 @@ const SongForm = ({ song, onSave, onDelete, onCancel }) => {
           project_id: song.project_id,
           is_public: isPublic,
         });
+        showToast("Song updated successfully", "success");
         onSave && onSave();
       } else {
         await songService.createSong({
@@ -36,17 +37,17 @@ const SongForm = ({ song, onSave, onDelete, onCancel }) => {
           project_id: projectId,
           is_public: isPublic,
         });
+        showToast("Song created successfully", "success");
         onSave && onSave();
       }
     } catch (err) {
       console.error("Error saving song:", err);
-      setError("Failed to save the song. Please try again.");
+      showToast("Failed to save the song. Please try again.", "error");
     }
   };
 
   const handleDelete = async () => {
     if (!song) return;
-
     confirmAlert({
       title: "Delete Song",
       message:
@@ -57,10 +58,14 @@ const SongForm = ({ song, onSave, onDelete, onCancel }) => {
           onClick: async () => {
             try {
               await songService.deleteSong(song.id);
+              showToast("Song deleted successfully", "success");
               onDelete && onDelete();
             } catch (err) {
               console.error("Error deleting song:", err);
-              setError("Failed to delete the song. Please try again.");
+              showToast(
+                "Failed to delete the song. Please try again.",
+                "error"
+              );
             }
           },
         },
@@ -93,13 +98,6 @@ const SongForm = ({ song, onSave, onDelete, onCancel }) => {
 
         <div className="card-body p-4">
           <form onSubmit={handleSubmit}>
-            {error && (
-              <div className="alert alert-danger d-flex align-items-center">
-                <i className="bi bi-exclamation-circle me-2"></i>
-                {error}
-              </div>
-            )}
-
             <div className="mb-4">
               <label className="form-label text-muted small">Song Title</label>
               <div className="input-group">

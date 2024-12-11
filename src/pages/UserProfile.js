@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { userService } from "../api/userService";
-import Toast from "../components/Toast";
 import { confirmAlert } from "react-confirm-alert";
 import CardHeader from "../components/CardHeader";
 import ProfileForm from "../components/ProfileForm";
 import InvitationManager from "../components/InvitationManager";
+import { useToast } from "../components/ToastContext";
 
 const availableRoles = [
   "ROLE_GUITARIST",
@@ -46,11 +46,10 @@ const RoleDisplay = ({ roles }) => {
 const UserProfile = () => {
   const [userProfile, setUserProfile] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [toastMessage, setToastMessage] = useState(null);
-  const [toastType, setToastType] = useState("success");
   const [selectedRoles, setSelectedRoles] = useState([]);
   const [projects, setProjects] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const { showToast } = useToast();
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -74,12 +73,6 @@ const UserProfile = () => {
     };
     fetchProfile();
   }, []);
-
-  const showToast = (message, type = "success") => {
-    setToastMessage(message);
-    setToastType(type);
-    setTimeout(() => setToastMessage(null), 3000);
-  };
 
   const handleTogglePublic = (field) => {
     setUserProfile((prev) => ({
@@ -120,9 +113,15 @@ const UserProfile = () => {
       setProjects(data.projects || []);
       showToast("Profile updated successfully!", "success");
       setIsEditing(false);
-    } catch (error) {
-      console.error("Error updating profile:", error);
-      showToast("Error updating profile.", "error");
+    } catch (err) {
+      if (err.response && err.response.status === 400) {
+        showToast(
+          err.response.data.error || "An error occurred. Please try again.",
+          "error"
+        );
+      } else {
+        showToast("An error occurred. Please try again.", "error");
+      }
     }
   };
 
@@ -480,11 +479,6 @@ const UserProfile = () => {
           </div>
         </div>
       )}
-      <Toast
-        message={toastMessage}
-        type={toastType}
-        onClose={() => setToastMessage(null)}
-      />
     </div>
   );
 };

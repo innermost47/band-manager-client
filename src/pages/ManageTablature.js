@@ -4,7 +4,7 @@ import { tablatureService } from "../api/tablatureService";
 import TablatureEditor from "../components/TablatureEditor";
 import VexTabDocumentation from "../components/VexTabDocumentation";
 import Modal from "react-bootstrap/Modal";
-import Toast from "../components/Toast";
+import { useToast } from "../components/ToastContext";
 
 const ManageTablature = () => {
   const { songId, tabId } = useParams();
@@ -12,8 +12,7 @@ const ManageTablature = () => {
   const [title, setTitle] = useState("");
   const [instrument, setInstrument] = useState("");
   const [content, setContent] = useState("");
-  const [toastMessage, setToastMessage] = useState(null);
-  const [toastType, setToastType] = useState("success");
+  const { showToast } = useToast();
   const [showHelp, setShowHelp] = useState(false);
   const navigate = useNavigate();
 
@@ -72,12 +71,6 @@ const ManageTablature = () => {
         "error"
       );
     }
-  };
-
-  const showToast = (message, type = "success") => {
-    setToastMessage(message);
-    setToastType(type);
-    setTimeout(() => setToastMessage(null), 3000);
   };
 
   return (
@@ -158,12 +151,6 @@ const ManageTablature = () => {
           </div>
         </div>
       </div>
-
-      <Toast
-        message={toastMessage}
-        type={toastType}
-        onClose={() => setToastMessage(null)}
-      />
 
       <Modal
         show={showHelp}

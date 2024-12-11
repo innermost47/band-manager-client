@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
 import { userService } from "../api/userService";
-import Toast from "../components/Toast";
+import { useToast } from "../components/ToastContext";
 
 const Profiles = () => {
   const [profiles, setProfiles] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [toastMessage, setToastMessage] = useState(null);
-  const [toastType, setToastType] = useState("success");
+  const { showToast } = useToast();
 
   useEffect(() => {
     const fetchProfiles = async () => {
@@ -22,12 +21,6 @@ const Profiles = () => {
     };
     fetchProfiles();
   }, []);
-
-  const showToast = (message, type = "success") => {
-    setToastMessage(message);
-    setToastType(type);
-    setTimeout(() => setToastMessage(null), 3000);
-  };
 
   if (isLoading) {
     return (
@@ -72,11 +65,6 @@ const Profiles = () => {
       ) : (
         <p className="text-muted">No profiles available.</p>
       )}
-      <Toast
-        message={toastMessage}
-        type={toastType}
-        onClose={() => setToastMessage(null)}
-      />
     </div>
   );
 };

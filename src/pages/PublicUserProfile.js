@@ -1,17 +1,16 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { userService } from "../api/userService";
-import Toast from "../components/Toast";
 import CardHeader from "../components/CardHeader";
 import CollaborationManager from "../components/CollaborationManager";
+import { useToast } from "../components/ToastContext";
 
 const PublicUserProfile = () => {
   const [publicProfile, setPublicProfile] = useState(null);
   const [projectCount, setProjectCount] = useState(0);
   const [projectsA, setProjectsA] = useState([]);
   const [recipientId, setUserBId] = useState(null);
-  const [toastMessage, setToastMessage] = useState(null);
-  const [toastType, setToastType] = useState("success");
+  const { showToast } = useToast();
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -43,12 +42,6 @@ const PublicUserProfile = () => {
     };
     fetchCurrentUserProjects();
   }, [id]);
-
-  const showToast = (message, type = "success") => {
-    setToastMessage(message);
-    setToastType(type);
-    setTimeout(() => setToastMessage(null), 3000);
-  };
 
   if (!publicProfile) {
     return (
@@ -215,11 +208,6 @@ const PublicUserProfile = () => {
           )}
         </div>
       </div>
-      <Toast
-        message={toastMessage}
-        type={toastType}
-        onClose={() => setToastMessage(null)}
-      />
     </div>
   );
 };

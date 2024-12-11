@@ -1,15 +1,15 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { userService } from "../api/userService";
+import { useToast } from "../components/ToastContext";
 
 const VerifyEmail = () => {
   const [verificationCode, setVerificationCode] = useState("");
-  const [error, setError] = useState("");
-  const [message, setMessage] = useState("");
   const [showLoader, setLoader] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const email = location.state?.email;
+  const { showToast } = useToast();
 
   const handleVerify = async (e) => {
     e.preventDefault();
@@ -21,13 +21,18 @@ const VerifyEmail = () => {
       });
 
       if (response.data.message === "Email verified successfully.") {
-        console.log("Email verification successful, redirecting to login...");
-        setMessage("Your email has been verified successfully. Redirecting...");
+        showToast(
+          "Your email has been verified successfully. Redirecting...",
+          "success"
+        );
         setTimeout(() => navigate("/"), 2000);
       }
     } catch (error) {
       console.error("Error during verification:", error);
-      setError(error.response?.data?.error || "Invalid verification code");
+      showToast(
+        error.response?.data?.error || "Invalid verification code",
+        "error"
+      );
     } finally {
       setLoader(false);
     }
@@ -52,19 +57,6 @@ const VerifyEmail = () => {
           </div>
 
           <form onSubmit={handleVerify}>
-            {error && (
-              <div className="alert alert-danger d-flex align-items-center">
-                <i className="bi bi-exclamation-circle me-2"></i>
-                {error}
-              </div>
-            )}
-            {message && (
-              <div className="alert alert-success d-flex align-items-center">
-                <i className="bi bi-check-circle me-2"></i>
-                {message}
-              </div>
-            )}
-
             <div className="mb-4">
               <label className="form-label text-muted small">
                 Verification Code
