@@ -35,5 +35,5 @@ jobs:
 
       - name: Deploy to shared hosting
         run: |
-          rsync -avz --delete -e "ssh -i ~/.ssh/deploy_key -p ${{ secrets.SSH_PORT }}" \
+          rsync -avz -v --delete -e "ssh -i ~/.ssh/deploy_key -p ${{ secrets.SSH_PORT }} -v" \
           build/ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.DEPLOY_PATH }}
