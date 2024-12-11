@@ -28,6 +28,7 @@ import CookieConsent from "./components/CookieConsent";
 import { setNavigationCallback } from "./api/api";
 import { useEffect } from "react";
 import { ToastProvider } from "./components/ToastContext";
+import ForgotPassword from "./pages/ForgotPassword";
 
 const DefaultRoute = () => {
   const isAuthenticated = localStorage.getItem("token");
@@ -56,7 +57,14 @@ const AppRoutes = () => {
     <Routes>
       <Route path="/" element={<DefaultRoute />} />
 
-      {/* Routes publiques sans Layout */}
+      <Route
+        path="/forgot-password"
+        element={
+          <PublicLayout>
+            <ForgotPassword />
+          </PublicLayout>
+        }
+      />
       <Route
         path="/login"
         element={

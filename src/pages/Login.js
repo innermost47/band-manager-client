@@ -105,7 +105,8 @@ const Login = () => {
           New registrations are currently closed
           <br />
           <small className="text-muted">
-            Maximum capacity reached ({registrationStats.totalUsers}/{registrationStats.maxUsers} users)
+            Maximum capacity reached ({registrationStats.totalUsers}/
+            {registrationStats.maxUsers} users)
           </small>
         </div>
       );
@@ -145,7 +146,7 @@ const Login = () => {
               </div>
             </div>
 
-            <div className="mb-4">
+            <div className="mb-1">
               <label className="form-label text-muted small">Password</label>
               <div className="input-group">
                 <span className="input-group-text">
@@ -160,6 +161,15 @@ const Login = () => {
                   placeholder="Enter your password..."
                 />
               </div>
+            </div>
+            <div className="text-end mb-3">
+              <span
+                onClick={() => navigate("/forgot-password")}
+                className="text-primary small"
+                style={{ cursor: "pointer" }}
+              >
+                Forgot Password?
+              </span>
             </div>
 
             <div className="d-grid">

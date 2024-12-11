@@ -2,6 +2,9 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { userService } from "../api/userService";
 import { useToast } from "../components/ToastContext";
+import { availableRoles } from "../config/constants";
+import { isPasswordValid } from "../utils/passwordvalidator";
+import PasswordValidator from "../components/PasswordValidator";
 
 const SignUp = () => {
   const [name, setName] = useState("");
@@ -10,33 +13,9 @@ const SignUp = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const { showToast } = useToast();
   const [showLoader, setLoader] = useState(false);
-  const [passwordValidation, setPasswordValidation] = useState({
-    length: false,
-    alphaNumeric: false,
-    specialCharacter: false,
-    match: false,
-  });
   const [selectedRoles, setSelectedRoles] = useState([]);
 
   const navigate = useNavigate();
-
-  const validatePassword = (password, confirmPassword) => {
-    setPasswordValidation({
-      length: password.length >= 8,
-      alphaNumeric: /^(?=.*[a-zA-Z])(?=.*\d).+$/.test(password),
-      specialCharacter: /[!@#$%^&*(),.?":{}|<>]/.test(password),
-      match: password === confirmPassword,
-    });
-  };
-
-  const availableRoles = [
-    "ROLE_GUITARIST",
-    "ROLE_ARRANGEUR",
-    "ROLE_SINGER",
-    "ROLE_DRUMMER",
-    "ROLE_MANAGER",
-    "ROLE_BASSIST",
-  ];
 
   const handleRoleChange = (e) => {
     const role = e.target.value;
@@ -49,25 +28,13 @@ const SignUp = () => {
     }
   };
 
-  const handlePasswordChange = (e) => {
-    const value = e.target.value;
-    setPassword(value);
-    validatePassword(value, confirmPassword);
-  };
-
-  const handleConfirmPasswordChange = (e) => {
-    const value = e.target.value;
-    setConfirmPassword(value);
-    validatePassword(password, value);
-  };
-
   const handleSignUp = async (e) => {
     setLoader(true);
     e.preventDefault();
-    const { length, alphaNumeric, specialCharacter, match } =
-      passwordValidation;
-    if (!length || !alphaNumeric || !specialCharacter || !match) {
+
+    if (!isPasswordValid(password, confirmPassword)) {
       showToast("Please meet all password requirements.", "error");
+      setLoader(false);
       return;
     }
 
@@ -153,103 +120,14 @@ const SignUp = () => {
               </div>
             </div>
 
-            <div className="mb-3">
-              <label className="form-label text-muted small">Password</label>
-              <div className="input-group">
-                <span className="input-group-text">
-                  <i className="bi bi-lock text-primary"></i>
-                </span>
-                <input
-                  type="password"
-                  className="form-control"
-                  value={password}
-                  onChange={handlePasswordChange}
-                  required
-                  placeholder="Create password..."
-                />
-              </div>
-              <ul className="list-unstyled mt-2 small">
-                <li
-                  className={
-                    passwordValidation.length ? "text-success" : "text-danger"
-                  }
-                >
-                  <i
-                    className={`bi ${
-                      passwordValidation.length
-                        ? "bi-check-circle"
-                        : "bi-x-circle"
-                    } me-2`}
-                  ></i>
-                  At least 8 characters
-                </li>
-                <li
-                  className={
-                    passwordValidation.alphaNumeric
-                      ? "text-success"
-                      : "text-danger"
-                  }
-                >
-                  <i
-                    className={`bi ${
-                      passwordValidation.alphaNumeric
-                        ? "bi-check-circle"
-                        : "bi-x-circle"
-                    } me-2`}
-                  ></i>
-                  Contains letters and numbers
-                </li>
-                <li
-                  className={
-                    passwordValidation.specialCharacter
-                      ? "text-success"
-                      : "text-danger"
-                  }
-                >
-                  <i
-                    className={`bi ${
-                      passwordValidation.specialCharacter
-                        ? "bi-check-circle"
-                        : "bi-x-circle"
-                    } me-2`}
-                  ></i>
-                  Contains at least one special character (!@#$%^&*)
-                </li>
-              </ul>
-            </div>
-
-            <div className="mb-3">
-              <label className="form-label text-muted small">
-                Confirm Password
-              </label>
-              <div className="input-group">
-                <span className="input-group-text">
-                  <i className="bi bi-lock-fill text-primary"></i>
-                </span>
-                <input
-                  type="password"
-                  className="form-control"
-                  value={confirmPassword}
-                  onChange={handleConfirmPasswordChange}
-                  required
-                  placeholder="Confirm your password..."
-                />
-              </div>
-              <div
-                className={`small mt-2 ${
-                  passwordValidation.match ? "text-success" : "text-danger"
-                }`}
-              >
-                <i
-                  className={`bi ${
-                    passwordValidation.match ? "bi-check-circle" : "bi-x-circle"
-                  } me-2`}
-                ></i>
-                {passwordValidation.match
-                  ? "Passwords match"
-                  : "Passwords do not match"}
-              </div>
-            </div>
+            <PasswordValidator
+              password={password}
+              confirmPassword={confirmPassword}
+              onPasswordChange={(e) => setPassword(e.target.value)}
+              onConfirmPasswordChange={(e) =>
+                setConfirmPassword(e.target.value)
+              }
+            />
 
             <div className="mb-4">
               <label className="form-label text-muted small">
