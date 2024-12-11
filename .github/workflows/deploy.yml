@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - main 
-
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -24,7 +23,22 @@ jobs:
       - name: Build application
         run: npm run build
         env:
-          CI: false 
+          CI: false
+          REACT_APP_API_URL: ${{ secrets.REACT_APP_API_URL }}
+          REACT_APP_COMPANY_NAME: ${{ secrets.REACT_APP_COMPANY_NAME }}
+          REACT_APP_COMPANY_ADDRESS: ${{ secrets.REACT_APP_COMPANY_ADDRESS }}
+          REACT_APP_COMPANY_EMAIL: ${{ secrets.REACT_APP_COMPANY_EMAIL }}
+          REACT_APP_COMPANY_PHONE: ${{ secrets.REACT_APP_COMPANY_PHONE }}
+          REACT_APP_HOSTING_PROVIDER: ${{ secrets.REACT_APP_HOSTING_PROVIDER }}
+
+      - name: Copy .htaccess to build
+        run: |
+          echo "RewriteEngine On" > build/.htaccess
+          echo "RewriteCond %{HTTPS} !=on" >> build/.htaccess
+          echo "RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]" >> build/.htaccess
+          echo "RewriteCond %{REQUEST_FILENAME} !-f" >> build/.htaccess
+          echo "RewriteCond %{REQUEST_FILENAME} !-d" >> build/.htaccess
+          echo "RewriteRule ^ index.html [L]" >> build/.htaccess
 
       - name: Configure SSH
         run: |
