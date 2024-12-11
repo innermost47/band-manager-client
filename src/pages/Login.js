@@ -8,8 +8,25 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const { showToast } = useToast();
   const [showLoader, setLoader] = useState(false);
+  const [registrationAvailable, setRegistrationAvailable] = useState(true);
+  const [registrationStats, setRegistrationStats] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
+
+  useEffect(() => {
+    checkRegistrationAvailability();
+  }, []);
+
+  const checkRegistrationAvailability = async () => {
+    try {
+      const response = await loginService.checkRegistrationAvailability();
+      setRegistrationAvailable(response.data.canRegister);
+      setRegistrationStats(response.data);
+    } catch (error) {
+      console.error("Error checking registration availability:", error);
+      setRegistrationAvailable(false);
+    }
+  };
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -80,6 +97,22 @@ const Login = () => {
     }
   }, [location]);
 
+  const renderRegistrationMessage = () => {
+    if (!registrationAvailable && registrationStats) {
+      return (
+        <div className="alert alert-warning text-center small mb-0">
+          <i className="bi bi-exclamation-triangle me-2"></i>
+          New registrations are currently closed
+          <br />
+          <small className="text-muted">
+            Maximum capacity reached ({registrationStats.totalUsers}/{registrationStats.maxUsers} users)
+          </small>
+        </div>
+      );
+    }
+    return null;
+  };
+
   return (
     <div className="min-vh-100 d-flex justify-content-center align-items-center p-5">
       <div className="card shadow-sm" style={{ maxWidth: "400px" }}>
@@ -149,15 +182,22 @@ const Login = () => {
           </form>
 
           <div className="text-center mt-4">
-            <p className="text-muted mb-2">Don't have an account?</p>
-            <div
-              onClick={() => navigate(`/signup`)}
-              className="text-primary fw-semibold"
-              style={{ cursor: "pointer" }}
-            >
-              Create Account
-            </div>
+            {registrationAvailable ? (
+              <>
+                <p className="text-muted mb-2">Don't have an account?</p>
+                <div
+                  onClick={() => navigate(`/signup`)}
+                  className="text-primary fw-semibold"
+                  style={{ cursor: "pointer" }}
+                >
+                  Create Account
+                </div>
+              </>
+            ) : (
+              renderRegistrationMessage()
+            )}
           </div>
+
           <div className="text-center mt-4 pt-3 border-top">
             <a
               href="/legals"
