@@ -24,8 +24,32 @@ const InviteForm = ({ userProjects, onInvite }) => {
 
   return (
     <div className="card shadow mt-4">
-      <CardHeader title="Invite to Project" icon="bi-envelope-plus" />
+      <CardHeader
+        title="Invite by Email Address"
+        icon="bi-envelope-plus"
+        subtitle="Send an invitation code to any email address"
+      />
       <div className="card-body">
+        <div className="alert alert-info mb-3">
+          <h6 className="alert-heading d-flex align-items-center">
+            <i className="bi bi-info-circle-fill me-2"></i>
+            How email invitations work:
+          </h6>
+          <ul className="mb-0 small">
+            <li>
+              The recipient will receive an email with a unique invitation code
+            </li>
+            <li>
+              If they already have an account, they can enter the code in the
+              "Join Project" section
+            </li>
+            <li>
+              If they don't have an account yet, they'll be guided to create one
+              first
+            </li>
+          </ul>
+        </div>
+
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
             <label className="form-label text-muted small">
@@ -49,7 +73,7 @@ const InviteForm = ({ userProjects, onInvite }) => {
 
           <div className="mb-4">
             <label className="form-label text-muted small">
-              Invite by Email
+              Recipient Email
             </label>
             <div className="input-group">
               <span className="input-group-text">
@@ -66,7 +90,8 @@ const InviteForm = ({ userProjects, onInvite }) => {
             </div>
             <small className="text-muted mt-1 d-block">
               <i className="bi bi-info-circle me-1"></i>
-              The invitation link will be sent to this email address
+              An email containing the invitation code will be sent to this
+              address
             </small>
           </div>
 

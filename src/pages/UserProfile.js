@@ -258,7 +258,7 @@ const UserProfile = () => {
 
   const handleInvite = async (inviteData) => {
     try {
-      const response = await userService.inviteByEmail(inviteData);
+      let response = await userService.inviteByEmail(inviteData);
       if (response.status === 200) {
         showToast("Invitation sent successfully!", "success");
         response = await userService.getProfile();
