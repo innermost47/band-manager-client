@@ -30,6 +30,7 @@ import { useEffect } from "react";
 import { ToastProvider } from "./components/ToastContext";
 import ForgotPassword from "./pages/ForgotPassword";
 import JoinProjectPage from "./pages/JoinProject";
+import { ThemeProvider } from "./components/ThemeContext";
 
 const DefaultRoute = () => {
   const isAuthenticated = localStorage.getItem("token");
@@ -233,9 +234,11 @@ const AppRoutes = () => {
 
 function App() {
   return (
-    <Router>
-      <AppRoutes />
-    </Router>
+    <ThemeProvider>
+      <Router>
+        <AppRoutes />
+      </Router>
+    </ThemeProvider>
   );
 }
 export default App;

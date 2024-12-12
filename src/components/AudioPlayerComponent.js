@@ -2,25 +2,86 @@ import React, { useState, useEffect } from "react";
 import AudioPlayer from "react-h5-audio-player";
 import "react-h5-audio-player/lib/styles.css";
 import CardHeader from "./CardHeader";
+import { useTheme } from "./ThemeContext";
 
 const AudioPlayerComponent = ({ audioUrls }) => {
   const [tracks, setTracks] = useState([]);
+  const { isDarkMode } = useTheme();
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
   const [shouldAutoPlay, setShouldAutoPlay] = useState(false);
-  const customIcons = {
-    play: <i className="bi bi-play-fill fs-2 text-white"></i>,
-    pause: <i className="bi bi-pause-fill fs-2 text-white"></i>,
-    rewind: <i className="bi bi-backward-fill fs-5 text-white"></i>,
-    forward: <i className="bi bi-forward-fill fs-5 text-white"></i>,
-    previous: <i className="bi bi-skip-backward-fill fs-5 text-white"></i>,
-    next: <i className="bi bi-skip-forward-fill fs-5 text-white"></i>,
-    loop: <i className="bi bi-repeat fs-5 text-white"></i>,
-    loopOff: (
-      <i className="bi bi-repeat fs-5 text-white" style={{ opacity: 0.2 }}></i>
+  const customIcons = (isDarkMode) => ({
+    play: (
+      <i
+        className={`bi bi-play-fill fs-2 ${
+          isDarkMode ? "text-white" : "text-dark"
+        }`}
+      ></i>
     ),
-    volume: <i className="bi bi-volume-up fs-5 text-white"></i>,
-    volumeMute: <i className="bi bi-volume-mute fs-5 text-white"></i>,
-  };
+    pause: (
+      <i
+        className={`bi bi-pause-fill fs-2 ${
+          isDarkMode ? "text-white" : "text-dark"
+        }`}
+      ></i>
+    ),
+    rewind: (
+      <i
+        className={`bi bi-backward-fill fs-5 ${
+          isDarkMode ? "text-white" : "text-dark"
+        }`}
+      ></i>
+    ),
+    forward: (
+      <i
+        className={`bi bi-forward-fill fs-5 ${
+          isDarkMode ? "text-white" : "text-dark"
+        }`}
+      ></i>
+    ),
+    previous: (
+      <i
+        className={`bi bi-skip-backward-fill fs-5 ${
+          isDarkMode ? "text-white" : "text-dark"
+        }`}
+      ></i>
+    ),
+    next: (
+      <i
+        className={`bi bi-skip-forward-fill fs-5 ${
+          isDarkMode ? "text-white" : "text-dark"
+        }`}
+      ></i>
+    ),
+    loop: (
+      <i
+        className={`bi bi-repeat fs-5 ${
+          isDarkMode ? "text-white" : "text-dark"
+        }`}
+      ></i>
+    ),
+    loopOff: (
+      <i
+        className={`bi bi-repeat fs-5 ${
+          isDarkMode ? "text-white" : "text-dark"
+        }`}
+        style={{ opacity: 0.2 }}
+      ></i>
+    ),
+    volume: (
+      <i
+        className={`bi bi-volume-up fs-5 ${
+          isDarkMode ? "text-white" : "text-dark"
+        }`}
+      ></i>
+    ),
+    volumeMute: (
+      <i
+        className={`bi bi-volume-mute fs-5 ${
+          isDarkMode ? "text-white" : "text-dark"
+        }`}
+      ></i>
+    ),
+  });
 
   useEffect(() => {
     setTracks([]);
@@ -104,8 +165,8 @@ const AudioPlayerComponent = ({ audioUrls }) => {
               autoPlay={false}
               preload={null}
               onEnded={handleNext}
-              className="bg-dark"
-              customIcons={customIcons}
+              className={isDarkMode ? "bg-dark" : "bg-body"}
+              customIcons={customIcons(isDarkMode)}
             />
           </div>
         </div>

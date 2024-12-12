@@ -68,7 +68,7 @@ const SignUp = () => {
 
   return (
     <div className="min-vh-100 d-flex justify-content-center align-items-center p-5">
-      <div className="card shadow-sm" style={{ maxWidth: "500px" }}>
+      <div className="card shadow-sm w-100" style={{ maxWidth: "500px" }}>
         <div className="card-body p-4">
           <div className="text-center mb-4">
             <div

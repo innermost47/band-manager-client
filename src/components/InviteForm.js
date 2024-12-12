@@ -71,7 +71,7 @@ const InviteForm = ({ userProjects, onInvite }) => {
             </select>
           </div>
 
-          <div className="mb-4">
+          <div className="mb-3">
             <label className="form-label text-muted small">
               Recipient Email
             </label>
@@ -113,7 +113,7 @@ const InviteForm = ({ userProjects, onInvite }) => {
               ) : (
                 <>
                   <i className="bi bi-send me-2"></i>
-                  Send Invitation
+                  Send
                 </>
               )}
             </button>

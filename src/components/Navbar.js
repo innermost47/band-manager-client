@@ -1,7 +1,10 @@
 import { Link, useNavigate } from "react-router-dom";
 import { confirmAlert } from "react-confirm-alert";
+import ThemeToggle from "./ThemeToggle";
+import { useTheme } from "./ThemeContext";
 
 const Navbar = () => {
+  const { isDarkMode } = useTheme();
   const navigate = useNavigate();
   const handleLogout = () => {
     confirmAlert({
@@ -24,7 +27,11 @@ const Navbar = () => {
     });
   };
   return (
-    <nav className="navbar navbar-expand-lg shadow-sm sticky-top bg-dark">
+    <nav
+      className={`navbar navbar-expand-lg shadow-sm sticky-top ${
+        isDarkMode ? "bg-dark" : "bg-light"
+      }`}
+    >
       <div className="container">
         <Link
           className="navbar-brand d-flex align-items-center"
@@ -97,13 +104,16 @@ const Navbar = () => {
               </Link>
             </li>
           </ul>
-          <button
-            className="btn btn-outline-danger rounded-pill d-flex align-items-center"
-            onClick={handleLogout}
-          >
-            <i className="bi bi-box-arrow-left me-2"></i>
-            Logout
-          </button>
+          <div className="d-flex gap-2">
+            <ThemeToggle />
+            <button
+              className="btn btn-outline-danger rounded-pill d-flex align-items-center"
+              onClick={handleLogout}
+            >
+              <i className="bi bi-box-arrow-left me-2"></i>
+              Logout
+            </button>
+          </div>
         </div>
       </div>
     </nav>

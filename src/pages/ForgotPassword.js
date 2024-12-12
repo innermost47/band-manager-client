@@ -131,10 +131,19 @@ const ForgotPassword = () => {
 
   return (
     <div className="min-vh-100 d-flex justify-content-center align-items-center p-5">
-      <div className="card shadow-sm" style={{ maxWidth: "400px" }}>
+      <div className="card shadow-sm w-100" style={{ maxWidth: "400px" }}>
         <div className="card-body p-4">
           <div className="text-center mb-4">
-            <img src="/logo.png" alt="logo" className="w-75 mb-3" />
+            <div
+              className="rounded-circle bg-primary bg-opacity-10 d-inline-flex align-items-center justify-content-center mb-3"
+              style={{
+                width: "64px",
+                height: "64px",
+                minWidth: "64px",
+              }}
+            >
+              <i className="bi bi-key fs-2 text-primary"></i>
+            </div>
             <h4 className="mb-1">Forgot Password?</h4>
             <p className="text-muted small">
               {step === 1

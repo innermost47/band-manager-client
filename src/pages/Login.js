@@ -116,10 +116,21 @@ const Login = () => {
 
   return (
     <div className="min-vh-100 d-flex justify-content-center align-items-center p-5">
-      <div className="card shadow-sm" style={{ maxWidth: "400px" }}>
+      <div className="card shadow-sm w-100" style={{ maxWidth: "400px" }}>
         <div className="card-body p-4">
           <div className="text-center mb-4">
-            <img src="/logo.png" alt="logo" className="w-75 mb-3" />
+            <div
+              className="rounded-circle bg-primary bg-opacity-10 d-inline-flex align-items-center justify-content-center mb-3"
+              style={{
+                width: "64px",
+                height: "64px",
+                minWidth: "64px",
+              }}
+            >
+              <i className="bi bi-door-open fs-2 text-primary"></i>
+            </div>
+            <h1 className="fw-bold h3 text-primary mb-2">Band Manager</h1>
+            <div className="border-top w-50 mx-auto my-3"></div>
             <h4 className="mb-1">Welcome Back!</h4>
             <p className="text-muted small">
               Sign in to continue to your account
