@@ -5,6 +5,7 @@ import CardHeader from "../components/CardHeader";
 import ProfileForm from "../components/ProfileForm";
 import InvitationManager from "../components/InvitationManager";
 import { useToast } from "../components/ToastContext";
+import InviteForm from "../components/InviteForm";
 
 const availableRoles = [
   "ROLE_GUITARIST",
@@ -255,6 +256,30 @@ const UserProfile = () => {
     });
   };
 
+  const handleInvite = async (inviteData) => {
+    try {
+      const response = await userService.inviteByEmail(inviteData);
+      if (response.status === 200) {
+        showToast("Invitation sent successfully!", "success");
+        response = await userService.getProfile();
+        const data = response.data;
+        setUserProfile({
+          ...data,
+          roles: data.roles || [],
+          projects: data.projects || [],
+          invitations: data.invitations || [],
+        });
+        setSelectedRoles(data.roles || []);
+        setProjects(data.projects || []);
+      }
+    } catch (error) {
+      showToast(
+        error.response?.data?.error || "Failed to send invitation",
+        "error"
+      );
+    }
+  };
+
   return (
     <div className="container mt-5 mb-3">
       <div className="text-center mb-4">
@@ -463,6 +488,10 @@ const UserProfile = () => {
               </div>
             </div>
           </div>
+          <InviteForm
+            userProjects={userProfile.projects}
+            onInvite={handleInvite}
+          />
           <InvitationManager
             userProfile={userProfile}
             handleCancelInvitation={handleCancelInvitation}

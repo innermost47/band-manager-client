@@ -29,6 +29,7 @@ import { setNavigationCallback } from "./api/api";
 import { useEffect } from "react";
 import { ToastProvider } from "./components/ToastContext";
 import ForgotPassword from "./pages/ForgotPassword";
+import JoinProjectPage from "./pages/JoinProject";
 
 const DefaultRoute = () => {
   const isAuthenticated = localStorage.getItem("token");
@@ -115,6 +116,15 @@ const AppRoutes = () => {
           <Layout>
             <Navbar />
             <ProtectedRoute component={Dashboard} />
+          </Layout>
+        }
+      />
+      <Route
+        path="/join-project"
+        element={
+          <Layout>
+            <Navbar />
+            <ProtectedRoute component={JoinProjectPage} />
           </Layout>
         }
       />

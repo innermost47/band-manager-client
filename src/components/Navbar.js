@@ -3,7 +3,6 @@ import { confirmAlert } from "react-confirm-alert";
 
 const Navbar = () => {
   const navigate = useNavigate();
-
   const handleLogout = () => {
     confirmAlert({
       title: "Confirm Logout",
@@ -24,7 +23,6 @@ const Navbar = () => {
       ],
     });
   };
-
   return (
     <nav className="navbar navbar-expand-lg shadow-sm sticky-top bg-dark">
       <div className="container">
@@ -40,7 +38,6 @@ const Navbar = () => {
           </div>
           <span className="fw-bold">Dashboard</span>
         </Link>
-
         <button
           className="navbar-toggler border-0"
           type="button"
@@ -52,7 +49,6 @@ const Navbar = () => {
         >
           <span className="navbar-toggler-icon"></span>
         </button>
-
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav mx-auto mb-2 mb-lg-0">
             <li className="nav-item px-1">
@@ -76,23 +72,31 @@ const Navbar = () => {
             <li className="nav-item px-1">
               <Link
                 className="nav-link d-flex align-items-center"
-                to="/administrative-tasks"
-              >
-                <i className="bi bi-list-check me-2"></i>
-                Administrative Tasks
-              </Link>
-            </li>
-            <li className="nav-item px-1">
-              <Link
-                className="nav-link d-flex align-items-center"
                 to="/projects"
               >
                 <i className="bi bi-folder me-2"></i>
                 Projects
               </Link>
             </li>
+            <li className="nav-item px-1">
+              <Link
+                className="nav-link d-flex align-items-center"
+                to="/join-project"
+              >
+                <i className="bi bi-box-arrow-in-right me-2"></i>
+                Join Project
+              </Link>
+            </li>
+            <li className="nav-item px-1">
+              <Link
+                className="nav-link d-flex align-items-center"
+                to="/administrative-tasks"
+              >
+                <i className="bi bi-list-check me-2"></i>
+                Administrative Tasks
+              </Link>
+            </li>
           </ul>
-
           <button
             className="btn btn-outline-danger rounded-pill d-flex align-items-center"
             onClick={handleLogout}

@@ -20,4 +20,8 @@ export const userService = {
     await api.post(`/api/invitations/cancel/${token}`),
   sendCollaborationRequest: async (data) =>
     await api.post(`/api/invitations/request`, data),
+  inviteByEmail: async (data) =>
+    await api.post("/api/invitations/invite-by-email", data),
+  joinWithCode: async (data) =>
+    await api.post("/api/invitations/join-with-code", data),
 };

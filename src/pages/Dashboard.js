@@ -98,6 +98,43 @@ const Dashboard = () => {
                       minWidth: "40px",
                     }}
                   >
+                    <i className="bi bi-box-arrow-in-right text-primary"></i>
+                  </div>
+                  <div>
+                    <h6 className="mb-1">Join Project</h6>
+                    <p className="text-muted small mb-0">
+                      Enter invitation code to join existing projects
+                    </p>
+                  </div>
+                </div>
+                <div className="d-flex align-items-center">
+                  <div
+                    className="rounded-circle bg-primary bg-opacity-10 me-3 d-flex align-items-center justify-content-center"
+                    style={{
+                      width: "40px",
+                      height: "40px",
+                      minWidth: "40px",
+                    }}
+                  >
+                    <i className="bi bi-people text-primary"></i>
+                  </div>
+                  <div>
+                    <h6 className="mb-1">Public Profiles</h6>
+                    <p className="text-muted small mb-0">
+                      Discover and connect with other musicians and
+                      collaborators
+                    </p>
+                  </div>
+                </div>
+                <div className="d-flex align-items-center">
+                  <div
+                    className="rounded-circle bg-primary bg-opacity-10 me-3 d-flex align-items-center justify-content-center"
+                    style={{
+                      width: "40px",
+                      height: "40px",
+                      minWidth: "40px",
+                    }}
+                  >
                     <i className="bi bi-person text-primary"></i>
                   </div>
                   <div>
@@ -119,6 +156,13 @@ const Dashboard = () => {
                       onClick={() => navigate("/profile")}
                     >
                       <i className="bi bi-person-circle me-2"></i> My Profile
+                    </button>
+                    <button
+                      className="btn btn-outline-primary d-flex align-items-center justify-content-center"
+                      onClick={() => navigate("/join-project")}
+                    >
+                      <i className="bi bi-box-arrow-in-right me-2"></i> Join
+                      Project
                     </button>
                     <button
                       className="btn btn-outline-primary d-flex align-items-center justify-content-center"
