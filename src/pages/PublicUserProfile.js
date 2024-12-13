@@ -101,32 +101,41 @@ const PublicUserProfile = () => {
           <div className="card h-100 shadow-sm">
             <CardHeader title={"Professional Details"} icon={"bi-briefcase"} />
             <div className="card-body">
-              <div className="d-flex flex-column gap-3">
-                {publicProfile.sacemNumber && (
-                  <div>
-                    <div className="text-muted small">SACEM Number</div>
-                    <div>{publicProfile.sacemNumber}</div>
-                  </div>
-                )}
-                {publicProfile.bio && (
-                  <div>
-                    <div className="text-muted small">Biography</div>
-                    <div>{publicProfile.bio}</div>
-                  </div>
-                )}
-                {publicProfile.roles && publicProfile.roles.length > 0 && (
-                  <div>
-                    <div className="text-muted small">Roles</div>
+              {publicProfile.sacemNumber ||
+              publicProfile.bio ||
+              (publicProfile.roles && publicProfile.roles.length > 0) ? (
+                <div className="d-flex flex-column gap-3">
+                  {publicProfile.sacemNumber && (
                     <div>
-                      {publicProfile.roles.map((role) => (
-                        <span key={role} className="badge bg-primary me-1">
-                          {role.replace("ROLE_", "").toLowerCase()}
-                        </span>
-                      ))}
+                      <div className="text-muted small">SACEM Number</div>
+                      <div>{publicProfile.sacemNumber}</div>
                     </div>
-                  </div>
-                )}
-              </div>
+                  )}
+                  {publicProfile.bio && (
+                    <div>
+                      <div className="text-muted small">Biography</div>
+                      <div>{publicProfile.bio}</div>
+                    </div>
+                  )}
+                  {publicProfile.roles && publicProfile.roles.length > 0 && (
+                    <div>
+                      <div className="text-muted small">Roles</div>
+                      <div>
+                        {publicProfile.roles.map((role) => (
+                          <span key={role} className="badge bg-primary me-1">
+                            {role.replace("ROLE_", "").toLowerCase()}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="text-center py-4 text-muted">
+                  <i className="bi bi-file-earmark-x fs-2 mb-2 d-block"></i>
+                  <p>No professional details available</p>
+                </div>
+              )}
             </div>
           </div>
         </div>

@@ -7,4 +7,6 @@ export const loginService = {
     await api.get("/check-registration-availability"),
   forgotPassword: (data) => api.post("/password/forgot", data),
   resetPassword: (data) => api.post("/password/reset", data),
+  checkInvitationAvailability: async () =>
+    await api.get("/check-invitation-availability"),
 };
