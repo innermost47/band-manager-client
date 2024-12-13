@@ -115,7 +115,10 @@ const CollaborationManager = ({
             >
               <div className="d-flex align-items-center">
                 <i className="bi bi-folder-fill me-2"></i>
-                <span>{project.name}</span>
+                <span>{project.name}</span>{" "}
+                {project.isPublic && (
+                  <span className="badge bg-success ms-2">Public</span>
+                )}
               </div>
               {(status || isCollaborating) && (
                 <span
