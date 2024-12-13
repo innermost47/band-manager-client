@@ -4,20 +4,45 @@ import { COLUMN_TYPES } from "../config/constants";
 
 const AdministrativeTable = ({ task, onUpdate, onDelete }) => {
   const [tableStructure, setTableStructure] = useState(() => {
-    return (
-      task.tableStructure || {
-        columns: [],
-        columnTypes: [],
-        columnsToTotal: {},
+    const defaultStructure = {
+      columns: [],
+      columnTypes: [],
+      columnsToTotal: {},
+    };
+
+    if (!task.tableStructure) {
+      return defaultStructure;
+    }
+
+    if (
+      task.tableStructure.columns &&
+      Array.isArray(task.tableStructure.columns)
+    ) {
+      const columns = task.tableStructure.columns;
+      const columnTypes = Array.isArray(task.tableStructure.columnTypes)
+        ? task.tableStructure.columnTypes
+        : columns.map(() => "string");
+
+      while (columnTypes.length < columns.length) {
+        columnTypes.push("string");
       }
-    );
+
+      return {
+        ...task.tableStructure,
+        columns,
+        columnTypes,
+        columnsToTotal: task.tableStructure.columnsToTotal || {},
+      };
+    }
+
+    return defaultStructure;
   });
   const [columnTypes, setColumnTypes] = useState(() => {
-    if (task.tableStructure?.columnTypes?.length > 0) {
-      return task.tableStructure.columnTypes;
-    }
-    return tableStructure.columns.map(() => "string");
+    return (
+      tableStructure.columnTypes || tableStructure.columns.map(() => "string")
+    );
   });
+
   const [tableValues, setTableValues] = useState(
     task.tableValues?.length > 0 ? task.tableValues : [{}]
   );
@@ -38,21 +63,6 @@ const AdministrativeTable = ({ task, onUpdate, onDelete }) => {
       setTableValues([{}]);
     }
   }, [tableValues.length]);
-
-  useEffect(() => {
-    const initializeColumnTypes = () => {
-      if (task.tableStructure?.columnTypes?.length > 0) {
-        const updatedColumnTypes = task.tableStructure.columnTypes.map((type) =>
-          COLUMN_TYPES.includes(type) ? type : "string"
-        );
-        setColumnTypes(updatedColumnTypes);
-      } else {
-        setColumnTypes(tableStructure.columns.map(() => "string"));
-      }
-    };
-
-    initializeColumnTypes();
-  }, [task.tableStructure?.columnTypes, tableStructure.columns]);
 
   const findPreviousTotalColumn = useCallback(
     (currentIndex) => {
@@ -231,26 +241,52 @@ const AdministrativeTable = ({ task, onUpdate, onDelete }) => {
 
   const handleAddColumn = () => {
     if (
-      newColumnName.trim() &&
-      !tableStructure.columns.includes(newColumnName)
+      !newColumnName.trim() ||
+      tableStructure.columns.includes(newColumnName)
     ) {
-      const updatedColumns = [...tableStructure.columns, newColumnName.trim()];
-      const updatedTypes = [...columnTypes, newColumnType];
-      setColumnTypes(updatedTypes);
-      setTableStructure((prevState) => ({
-        ...prevState,
-        columns: updatedColumns,
-        columnTypes: updatedTypes,
-      }));
-      setTableValues((prevValues) =>
-        prevValues.map((row) => ({
-          ...row,
-          [newColumnName]: "",
-        }))
-      );
-      setNewColumnName("");
-      setNewColumnType("string");
+      return;
     }
+
+    const trimmedName = newColumnName.trim();
+    const currentColumns = Array.isArray(tableStructure.columns)
+      ? tableStructure.columns
+      : [];
+    const currentTypes = Array.isArray(columnTypes) ? columnTypes : [];
+
+    const updatedColumns = [...currentColumns, trimmedName];
+    const updatedTypes = [...currentTypes, newColumnType];
+    setTableStructure((prev) => ({
+      ...prev,
+      columns: updatedColumns,
+      columnTypes: updatedTypes,
+    }));
+
+    setColumnTypes(updatedTypes);
+    setTableValues((prevValues) => {
+      const updatedValues = Array.isArray(prevValues) ? prevValues : [];
+      return updatedValues.map((row) => ({
+        ...row,
+        [trimmedName]: newColumnType === "boolean" ? false : "",
+      }));
+    });
+    if (
+      [
+        "int",
+        "float",
+        "addition",
+        "substraction",
+        "multiplication",
+        "division",
+      ].includes(newColumnType)
+    ) {
+      setColumnsToTotal((prev) => ({
+        ...prev,
+        [trimmedName]: true,
+      }));
+    }
+
+    setNewColumnName("");
+    setNewColumnType("string");
   };
 
   useEffect(() => {
@@ -514,6 +550,14 @@ const AdministrativeTable = ({ task, onUpdate, onDelete }) => {
     onDelete(task.id);
   };
 
+  const renderColumnType = (index) => {
+    console.log(columnTypes);
+    if (!columnTypes || index >= columnTypes.length) {
+      return "string";
+    }
+    return columnTypes[index];
+  };
+
   return (
     <div className="card shadow mb-4">
       <div className="card-body overflowScroll">
@@ -552,7 +596,7 @@ const AdministrativeTable = ({ task, onUpdate, onDelete }) => {
                       {isEditing ? (
                         <>
                           <select
-                            value={columnTypes[index]}
+                            value={renderColumnType(index)}
                             onChange={(e) =>
                               handleChangeColumnType(index, e.target.value)
                             }
@@ -572,7 +616,7 @@ const AdministrativeTable = ({ task, onUpdate, onDelete }) => {
                             "multiplication",
                             "division",
                             "substraction",
-                          ].includes(columnTypes[index]) && (
+                          ].includes(renderColumnType(index)) && (
                             <div className="form-check mt-2">
                               <input
                                 type="checkbox"
@@ -595,7 +639,7 @@ const AdministrativeTable = ({ task, onUpdate, onDelete }) => {
                           {" "}
                           -{" "}
                           <span className="text-muted">
-                            ({columnTypes[index]})
+                            ({renderColumnType(index)})
                           </span>
                         </span>
                       )}
@@ -641,8 +685,8 @@ const AdministrativeTable = ({ task, onUpdate, onDelete }) => {
                     {isEditing ? (
                       row[tableStructure.columns[0]] === "TOTAL" ? (
                         index !== 0 &&
-                        (columnTypes[index] === "string" ||
-                          columnTypes[index] === "boolean") ? (
+                        (renderColumnType(index) === "string" ||
+                          renderColumnType(index) === "boolean") ? (
                           ""
                         ) : [
                             "int",
@@ -651,10 +695,11 @@ const AdministrativeTable = ({ task, onUpdate, onDelete }) => {
                             "substraction",
                             "multiplication",
                             "division",
-                          ].includes(columnTypes[index]) &&
+                          ].includes(renderColumnType(index)) &&
                           !columnsToTotal[col] ? (
                           ""
-                        ) : columnTypes[index].toLowerCase() === "boolean" ? (
+                        ) : renderColumnType(index).toLowerCase() ===
+                          "boolean" ? (
                           <input
                             type="checkbox"
                             checked={row[col] || false}
@@ -677,7 +722,8 @@ const AdministrativeTable = ({ task, onUpdate, onDelete }) => {
                             }
                           />
                         )
-                      ) : columnTypes[index].toLowerCase() === "boolean" ? (
+                      ) : renderColumnType(index).toLowerCase() ===
+                        "boolean" ? (
                         <input
                           type="checkbox"
                           checked={row[col] || false}
@@ -702,32 +748,33 @@ const AdministrativeTable = ({ task, onUpdate, onDelete }) => {
                       )
                     ) : row[tableStructure.columns[0]] === "TOTAL" ? (
                       index !== 0 &&
-                      (columnTypes[index] === "string" ||
-                        columnTypes[index] === "boolean") ? (
+                      (renderColumnType(index) === "string" ||
+                        renderColumnType(index) === "boolean") ? (
                         ""
-                      ) : ["int", "float"].includes(columnTypes[index]) &&
+                      ) : ["int", "float"].includes(renderColumnType(index)) &&
                         !columnsToTotal[col] ? (
                         ""
-                      ) : columnTypes[index].toLowerCase() === "boolean" ? (
+                      ) : renderColumnType(index).toLowerCase() ===
+                        "boolean" ? (
                         row[col] ? (
                           <i className="bi bi-check text-success"></i>
                         ) : (
                           <i className="bi bi-x text-danger"></i>
                         )
-                      ) : columnTypes[index] === "total" ||
-                        ["int", "float"].includes(columnTypes[index]) ? (
+                      ) : renderColumnType(index) === "total" ||
+                        ["int", "float"].includes(renderColumnType(index)) ? (
                         Number(row[col]).toFixed(2)
                       ) : (
                         row[col] || ""
                       )
-                    ) : columnTypes[index].toLowerCase() === "boolean" ? (
+                    ) : renderColumnType(index).toLowerCase() === "boolean" ? (
                       row[col] ? (
                         <i className="bi bi-check text-success"></i>
                       ) : (
                         <i className="bi bi-x text-danger"></i>
                       )
-                    ) : columnTypes[index] === "total" ||
-                      ["int"].includes(columnTypes[index]) ? (
+                    ) : renderColumnType(index) === "total" ||
+                      ["int"].includes(renderColumnType(index)) ? (
                       Number(row[col]).toFixed(2)
                     ) : (
                       row[col] || ""
