@@ -23,12 +23,15 @@ const EventCard = ({ event, onEdit }) => {
                 <span className="badge bg-success ms-2">Public</span>
               )}
             </div>
-            <button
-              className="btn btn-light btn-sm rounded-circle"
-              onClick={() => onEdit(event)}
-            >
-              <i className="bi bi-pencil"></i>
-            </button>
+            <div>
+              {" "}
+              <button
+                className="btn btn-light btn-sm rounded-circle"
+                onClick={() => onEdit(event)}
+              >
+                <i className="bi bi-pencil"></i>
+              </button>
+            </div>
           </div>
 
           <div className="mt-3">

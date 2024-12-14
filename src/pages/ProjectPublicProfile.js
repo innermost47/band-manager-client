@@ -7,12 +7,14 @@ import CardHeader from "../components/CardHeader";
 import { eventService } from "../api/eventService";
 import EventList from "../components/EventList";
 import { useToast } from "../components/ToastContext";
+import NotFound from "../components/NotFound";
 
 const ProjectPublicProfile = () => {
   const { id } = useParams();
   const [project, setProject] = useState(null);
   const [members, setMembers] = useState([]);
   const [image, setImage] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [isLoadingAudio, setIsLoadingAudio] = useState(true);
   const [isLoadingProfileImage, setIsLoadingProfileImage] = useState(true);
   const [audioUrls, setAudioUrls] = useState({});
@@ -36,6 +38,7 @@ const ProjectPublicProfile = () => {
   useEffect(() => {
     const fetchProject = async () => {
       try {
+        setIsLoading(true);
         const response = await projectService.getProject(id);
         setProject(response.data.project);
         setMembers(
@@ -62,7 +65,6 @@ const ProjectPublicProfile = () => {
           }
         }
         setAudioUrls(audioFiles);
-        setIsLoadingAudio(false);
         try {
           const eventsResponse = await eventService.getPublicEventsByProject(
             id
@@ -72,17 +74,21 @@ const ProjectPublicProfile = () => {
           console.error("Error fetching events:", error);
           showToast("Error fetching events.", "error");
         }
+        setIsLoading(false);
         setIsLoadingEvents(false);
+        setIsLoadingAudio(false);
       } catch (error) {
         console.error("Error fetching project details:", error);
         setIsLoadingProfileImage(false);
+        setIsLoading(false);
         setIsLoadingEvents(false);
+        setIsLoadingAudio(false);
       }
     };
     fetchProject();
   }, [id, getProfileImageFile]);
 
-  if (!project) {
+  if (isLoading) {
     return (
       <div className="container mt-5">
         <div className="d-flex justify-content-center align-items-center">
@@ -92,6 +98,10 @@ const ProjectPublicProfile = () => {
         </div>
       </div>
     );
+  }
+
+  if (!project && !isLoading) {
+    return <NotFound />;
   }
 
   return (

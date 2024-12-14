@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { confirmAlert } from "react-confirm-alert";
+import NotificationPanel from "../components/NotificationPanel";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -41,7 +42,7 @@ const Dashboard = () => {
         </div>
         <h2 className="mb-3">Welcome to Dashboard</h2>
       </div>
-
+      <NotificationPanel />
       {/* Welcome Card */}
       <div className="card shadow-sm mb-4">
         <div className="card-body p-4">

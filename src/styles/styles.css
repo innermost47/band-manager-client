@@ -78,3 +78,6 @@
 .rhap_volume-button > button {
   font-size: unset !important;
 }
+.card {
+  word-wrap: break-word;
+}

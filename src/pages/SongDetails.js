@@ -9,6 +9,7 @@ import { confirmAlert } from "react-confirm-alert";
 import { tablatureService } from "../api/tablatureService";
 import CardHeader from "../components/CardHeader";
 import { useToast } from "../components/ToastContext";
+import NotFound from "../components/NotFound";
 
 const NOTES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
 const MODES = [
@@ -34,10 +35,12 @@ const SongDetails = () => {
   const [audioDescriptions, setAudioDescriptions] = useState({});
   const { showToast } = useToast();
   const [audioUrls, setAudioUrls] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const fetchSong = async () => {
       try {
+        setIsLoading(true);
         const response = await songService.getSong(id);
         setSong(response.data);
         setLyrics(response.data.lyrics[0]?.content || "");
@@ -56,8 +59,10 @@ const SongDetails = () => {
           audioFileUrls[audio.id] = API_BASE_URL + "/" + audio.signed_url;
         }
         setAudioUrls(audioFileUrls);
+        setIsLoading(false);
       } catch (error) {
         console.error("Error fetching song details:", error);
+        setIsLoading(false);
       }
     };
     fetchSong();
@@ -258,7 +263,7 @@ const SongDetails = () => {
     }
   };
 
-  if (!song) {
+  if (isLoading) {
     return (
       <div className="container mt-5">
         <div className="d-flex justify-content-center align-items-center">
@@ -268,6 +273,10 @@ const SongDetails = () => {
         </div>
       </div>
     );
+  }
+
+  if (!isLoading && (!song || Object.keys(song).length === 0)) {
+    return <NotFound />;
   }
 
   return (

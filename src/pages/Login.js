@@ -93,7 +93,10 @@ const Login = () => {
 
   useEffect(() => {
     if (location.state?.error) {
-      showToast(location.state.error, "error");
+      if (localStorage.getItem("token")) {
+        showToast(location.state.error, "error");
+        localStorage.removeItem("token");
+      }
     }
   }, [location]);
 

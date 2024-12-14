@@ -31,6 +31,7 @@ import { ToastProvider } from "./components/ToastContext";
 import ForgotPassword from "./pages/ForgotPassword";
 import JoinProjectPage from "./pages/JoinProject";
 import { ThemeProvider } from "./components/ThemeContext";
+import NotFound from "./components/NotFound";
 
 const DefaultRoute = () => {
   const isAuthenticated = localStorage.getItem("token");
@@ -47,6 +48,15 @@ const PublicLayout = ({ children }) => (
     <CookieConsent />
   </ToastProvider>
 );
+
+const PrivateLayout = ({ children }) => {
+  return (
+    <Layout>
+      <Navbar />
+      {children}
+    </Layout>
+  );
+};
 
 const AppRoutes = () => {
   const navigate = useNavigate();
@@ -114,118 +124,117 @@ const AppRoutes = () => {
       <Route
         path="/dashboard"
         element={
-          <Layout>
-            <Navbar />
+          <PrivateLayout>
             <ProtectedRoute component={Dashboard} />
-          </Layout>
+          </PrivateLayout>
         }
       />
       <Route
         path="/join-project"
         element={
-          <Layout>
-            <Navbar />
+          <PrivateLayout>
             <ProtectedRoute component={JoinProjectPage} />
-          </Layout>
+          </PrivateLayout>
         }
       />
       <Route
         path="/projects"
         element={
-          <Layout>
-            <Navbar />
+          <PrivateLayout>
             <ProtectedRoute component={Projects} />
-          </Layout>
+          </PrivateLayout>
         }
       />
       <Route
         path="/projects/:id"
         element={
-          <Layout>
-            <Navbar />
+          <PrivateLayout>
             <ProtectedRoute component={ProjectDetails} />
-          </Layout>
+          </PrivateLayout>
         }
       />
       <Route
         path="/songs/:id"
         element={
-          <Layout>
-            <Navbar />
+          <PrivateLayout>
             <ProtectedRoute component={SongDetails} />
-          </Layout>
+          </PrivateLayout>
         }
       />
       <Route
         path="/tablatures/update/:tabId/:songId"
         element={
-          <Layout>
-            <Navbar />
+          <PrivateLayout>
             <ProtectedRoute component={ManageTablature} />
-          </Layout>
+          </PrivateLayout>
         }
       />
       <Route
         path="/tablatures/create/:songId"
         element={
-          <Layout>
-            <Navbar />
+          <PrivateLayout>
             <ProtectedRoute component={ManageTablature} />
-          </Layout>
+          </PrivateLayout>
         }
       />
       <Route
         path="/administrative-tasks"
         element={
-          <Layout>
-            <Navbar />
+          <PrivateLayout>
             <ProtectedRoute component={AdministrativeTasks} />
-          </Layout>
+          </PrivateLayout>
         }
       />
       <Route
         path="/public-projects/:id"
         element={
-          <Layout>
-            <Navbar />
+          <PrivateLayout>
             <ProtectedRoute component={ProjectPublicProfile} />
-          </Layout>
+          </PrivateLayout>
         }
       />
       <Route
         path="/profile"
         element={
-          <Layout>
-            <Navbar />
+          <PrivateLayout>
             <ProtectedRoute component={UserProfile} />
-          </Layout>
+          </PrivateLayout>
         }
       />
       <Route
         path="/public-profile/:id"
         element={
-          <Layout>
-            <Navbar />
+          <PrivateLayout>
             <ProtectedRoute component={PublicUserProfile} />
-          </Layout>
+          </PrivateLayout>
         }
       />
       <Route
         path="/profiles"
         element={
-          <Layout>
-            <Navbar />
+          <PrivateLayout>
             <ProtectedRoute component={PublicProfiles} />
-          </Layout>
+          </PrivateLayout>
         }
       />
       <Route
         path="/administrative-tasks/:adminTaskId"
         element={
-          <Layout>
-            <Navbar />
+          <PrivateLayout>
             <ProtectedRoute component={AdministrativeTaskDetails} />
-          </Layout>
+          </PrivateLayout>
+        }
+      />
+      <Route
+        path="*"
+        element={
+          <PrivateLayout>
+            {localStorage.getItem("token") ? (
+              <ProtectedRoute component={NotFound} />
+            ) : (
+              <NotFound />
+            )}
+          </PrivateLayout>
         }
       />
     </Routes>

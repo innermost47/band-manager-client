@@ -4,12 +4,14 @@ import { userService } from "../api/userService";
 import CardHeader from "../components/CardHeader";
 import CollaborationManager from "../components/CollaborationManager";
 import { useToast } from "../components/ToastContext";
+import NotFound from "../components/NotFound";
 
 const PublicUserProfile = () => {
   const [publicProfile, setPublicProfile] = useState(null);
   const [projectCount, setProjectCount] = useState(0);
   const [projectsA, setProjectsA] = useState([]);
   const [recipientId, setUserBId] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   const { showToast } = useToast();
   const { id } = useParams();
   const navigate = useNavigate();
@@ -17,14 +19,17 @@ const PublicUserProfile = () => {
   useEffect(() => {
     const fetchPublicProfile = async () => {
       try {
+        setIsLoading(true);
         const response = await userService.getMember(id);
         setPublicProfile(response.data);
         if (response.data.projects) {
           const count = Object.keys(response.data.projects).length;
           setProjectCount(count);
         }
+        setIsLoading(false);
       } catch (error) {
         console.error("Error fetching public profile:", error);
+        setIsLoading(false);
       }
     };
     fetchPublicProfile();
@@ -43,7 +48,7 @@ const PublicUserProfile = () => {
     fetchCurrentUserProjects();
   }, [id]);
 
-  if (!publicProfile) {
+  if (isLoading) {
     return (
       <div className="container mt-5">
         <div className="d-flex justify-content-center align-items-center">
@@ -53,6 +58,10 @@ const PublicUserProfile = () => {
         </div>
       </div>
     );
+  }
+
+  if (!publicProfile && !isLoading) {
+    return <NotFound />;
   }
 
   return (

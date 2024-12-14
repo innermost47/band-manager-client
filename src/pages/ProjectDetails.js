@@ -11,6 +11,7 @@ import EventForm from "../components/EventForm";
 import { eventService } from "../api/eventService";
 import EventCard from "../components/EventCard";
 import { useToast } from "../components/ToastContext";
+import NotFound from "../components/NotFound";
 
 const ProjectDetails = () => {
   const { id } = useParams();
@@ -26,8 +27,10 @@ const ProjectDetails = () => {
   const [isLoadingProfileImage, setIsLoadingProfileImage] = useState(true);
   const { showToast } = useToast();
   const songFormRef = useRef(null);
+  const eventFormRef = useRef(null);
   const [events, setEvents] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   const [isEventFormVisible, setIsEventFormVisible] = useState(false);
   const navigate = useNavigate();
 
@@ -59,6 +62,7 @@ const ProjectDetails = () => {
   useEffect(() => {
     const fetchProject = async () => {
       try {
+        setIsLoading(true);
         const response = await projectService.getProject(id);
         setProject(response.data.project);
         setMembers(response.data.project.members || []);
@@ -85,10 +89,13 @@ const ProjectDetails = () => {
           }
         }
         setAudioUrls(audioFiles);
+        setIsLoading(false);
         setIsLoadingAudio(false);
       } catch (error) {
         console.error("Error fetching project details:", error);
         setIsLoadingProfileImage(false);
+        setIsLoadingAudio(false);
+        setIsLoading(false);
       }
     };
     fetchProject();
@@ -111,11 +118,27 @@ const ProjectDetails = () => {
   const handleAddEvent = () => {
     setSelectedEvent(null);
     setIsEventFormVisible(true);
+    setTimeout(() => {
+      if (eventFormRef.current) {
+        eventFormRef.current.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }
+    }, 0);
   };
 
   const handleEditEvent = (event) => {
     setSelectedEvent(event);
     setIsEventFormVisible(true);
+    setTimeout(() => {
+      if (eventFormRef.current) {
+        eventFormRef.current.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }
+    }, 0);
   };
 
   const handleEventFormCancel = () => {
@@ -125,6 +148,8 @@ const ProjectDetails = () => {
 
   const refreshProject = async () => {
     try {
+      setIsLoadingAudio(true);
+      setIsLoading(true);
       const response = await projectService.getProject(id);
       const updatedProject = response.data.project;
       setMembers(response.data.project.members || []);
@@ -147,8 +172,12 @@ const ProjectDetails = () => {
         }
         setAudioUrls(audioFiles);
       }
+      setIsLoadingAudio(false);
+      setIsLoading(false);
     } catch (error) {
       console.error("Error refreshing project details:", error);
+      setIsLoadingAudio(false);
+      setIsLoading(false);
     }
   };
 
@@ -233,7 +262,7 @@ const ProjectDetails = () => {
     });
   };
 
-  if (!project) {
+  if (isLoading) {
     return (
       <div className="container mt-5">
         <div className="d-flex justify-content-center align-items-center">
@@ -243,6 +272,10 @@ const ProjectDetails = () => {
         </div>
       </div>
     );
+  }
+
+  if (!project && !isLoading) {
+    return <NotFound />;
   }
 
   return (
@@ -423,7 +456,7 @@ const ProjectDetails = () => {
                               )}
                             </div>
                             <button
-                              className="btn btn-light btn-sm rounded-pill"
+                              className="btn btn-light btn-sm rounded-pill ms-2"
                               onClick={() => handleEditSong(song)}
                             >
                               <i className="bi bi-pencil"></i>
@@ -478,6 +511,7 @@ const ProjectDetails = () => {
                         showToast("Event deleted successfully");
                       }}
                       onCancel={handleEventFormCancel}
+                      ref={songFormRef}
                     />
                   </div>
                 )}

@@ -4,6 +4,7 @@ import AdministrativeTable from "../components/AdministrativeTable";
 import { administrativeTaskService } from "../api/administrativeTaskService";
 import { confirmAlert } from "react-confirm-alert";
 import { useToast } from "../components/ToastContext";
+import NotFound from "../components/NotFound";
 
 const AdministrativeTaskDetails = () => {
   const { adminTaskId } = useParams();
@@ -82,14 +83,8 @@ const AdministrativeTaskDetails = () => {
     );
   }
 
-  if (!task) {
-    return (
-      <div className="container mt-5">
-        <div className="alert alert-warning">
-          No task found or error loading task.
-        </div>
-      </div>
-    );
+  if (!task && !isLoading) {
+    return <NotFound />;
   }
 
   return (

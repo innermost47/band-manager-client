@@ -48,7 +48,6 @@ api.interceptors.response.use(
       error.response?.status === 401 &&
       !error.config.url.includes("/login")
     ) {
-      localStorage.removeItem("token");
       navigationCallback({
         state: { error: "Your session has expired. Please log in again." },
       });

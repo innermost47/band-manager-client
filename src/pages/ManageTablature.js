@@ -5,11 +5,13 @@ import TablatureEditor from "../components/TablatureEditor";
 import VexTabDocumentation from "../components/VexTabDocumentation";
 import Modal from "react-bootstrap/Modal";
 import { useToast } from "../components/ToastContext";
+import NotFound from "../components/NotFound";
 
 const ManageTablature = () => {
   const { songId, tabId } = useParams();
   const location = useLocation();
   const [title, setTitle] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [instrument, setInstrument] = useState("");
   const [content, setContent] = useState("");
   const { showToast } = useToast();
@@ -22,13 +24,16 @@ const ManageTablature = () => {
     if (isUpdate && tabId) {
       const fetchTab = async () => {
         try {
+          setIsLoading(true);
           const response = await tablatureService.getTablature(tabId);
           setTitle(response.data.title);
           setInstrument(response.data.instrument);
           setContent(response.data.content || "");
+          setIsLoading(false);
         } catch (error) {
           console.error("Error fetching tablature:", error);
           showToast("Error fetching tablature.", "error");
+          setIsLoading(false);
         }
       };
 
@@ -72,6 +77,22 @@ const ManageTablature = () => {
       );
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="container mt-5">
+        <div className="d-flex justify-content-center align-items-center">
+          <div className="spinner-border text-info" role="status">
+            <span className="visually-hidden">Loading tablature...</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (isUpdate && !content && !title && !instrument && !isLoading) {
+    return <NotFound />;
+  }
 
   return (
     <div className="container mt-5 mb-3">

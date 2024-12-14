@@ -2,10 +2,18 @@ import { Link, useNavigate } from "react-router-dom";
 import { confirmAlert } from "react-confirm-alert";
 import ThemeToggle from "./ThemeToggle";
 import { useTheme } from "./ThemeContext";
+import { notificationService } from "../api/notificationService";
+import { useContext } from "react";
+import { format } from "date-fns";
+import { NotificationContext } from "./NotificationContext";
 
 const Navbar = () => {
   const { isDarkMode } = useTheme();
   const navigate = useNavigate();
+  const { notifications, isLoading, handleNotificationClick } =
+    useContext(NotificationContext);
+  const unreadNotifications = notifications.filter((n) => !n.hasSeen);
+
   const handleLogout = () => {
     confirmAlert({
       title: "Confirm Logout",
@@ -26,6 +34,7 @@ const Navbar = () => {
       ],
     });
   };
+
   return (
     <nav
       className={`navbar navbar-expand-lg shadow-sm sticky-top ${
@@ -106,6 +115,66 @@ const Navbar = () => {
           </ul>
           <div className="d-flex gap-2">
             <ThemeToggle />
+            <div className="dropdown">
+              <button
+                className="btn btn-outline-success rounded-pill d-flex align-items-center position-relative"
+                data-bs-toggle="dropdown"
+              >
+                <i className="bi bi-bell fs-5"></i>
+                {unreadNotifications.length > 0 && (
+                  <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                    {unreadNotifications.length}
+                    <span className="visually-hidden">
+                      unread notifications
+                    </span>
+                  </span>
+                )}
+              </button>
+              <div
+                className="dropdown-menu dropdown-menu-end"
+                style={{
+                  minWidth: "300px",
+                  maxHeight: "400px",
+                  overflowY: "auto",
+                }}
+              >
+                <div className="d-flex justify-content-between align-items-center p-3 border-bottom">
+                  <h6 className="mb-0">Notifications</h6>
+                  <Link to="/dashboard" className="text-decoration-none">
+                    View All
+                  </Link>
+                </div>
+                {isLoading ? (
+                  <div className="text-center p-3">
+                    <div
+                      className="spinner-border spinner-border-sm"
+                      role="status"
+                    >
+                      <span className="visually-hidden">Loading...</span>
+                    </div>
+                  </div>
+                ) : unreadNotifications.length === 0 ? (
+                  <div className="p-3 text-center text-muted">
+                    No new notifications
+                  </div>
+                ) : (
+                  notifications.slice(0, 5).map((notification) => (
+                    <Link
+                      key={notification.id}
+                      to={notification.frontEndUrl}
+                      className="dropdown-item p-3 border-bottom"
+                      onClick={(e) => handleNotificationClick(notification, e)}
+                    >
+                      <p className="mb-1 text-wrap">{notification.content}</p>
+                      <small className="text-muted">
+                        {format(new Date(notification.createdAt), "PPp")}
+                      </small>
+                    </Link>
+                  ))
+                )}
+              </div>
+            </div>
+
             <button
               className="btn btn-outline-danger rounded-pill d-flex align-items-center"
               onClick={handleLogout}

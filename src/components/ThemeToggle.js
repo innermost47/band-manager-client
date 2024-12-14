@@ -11,13 +11,11 @@ const ThemeToggle = () => {
     >
       {isDarkMode ? (
         <>
-          <i className="bi bi-sun-fill me-2"></i>
-          <span className="d-none d-md-inline">Light Mode</span>
+          <i className="bi bi-sun-fill"></i>
         </>
       ) : (
         <>
-          <i className="bi bi-moon-fill me-2"></i>
-          <span className="d-none d-md-inline">Dark Mode</span>
+          <i className="bi bi-moon-fill"></i>
         </>
       )}
     </button>
