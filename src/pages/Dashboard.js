@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { confirmAlert } from "react-confirm-alert";
 import NotificationPanel from "../components/NotificationPanel";
+import DashboardElementPresentation from "../components/DashboardElementPresentation";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -54,115 +55,47 @@ const Dashboard = () => {
                 workflow.
               </p>
               <div className="d-grid gap-3">
-                <div className="d-flex align-items-center">
-                  <div
-                    className="rounded-circle bg-primary bg-opacity-10 me-3 d-flex align-items-center justify-content-center"
-                    style={{
-                      width: "40px",
-                      height: "40px",
-                      minWidth: "40px",
-                    }}
-                  >
-                    <i className="bi bi-list-check text-primary"></i>
-                  </div>
-                  <div>
-                    <h6 className="mb-1">Tasks</h6>
-                    <p className="text-muted small mb-0">
-                      Manage operations and oversee tasks efficiently
-                    </p>
-                  </div>
-                </div>
-                <div className="d-flex align-items-center">
-                  <div
-                    className="rounded-circle bg-primary bg-opacity-10 me-3 d-flex align-items-center justify-content-center"
-                    style={{
-                      width: "40px",
-                      height: "40px",
-                      minWidth: "40px",
-                    }}
-                  >
-                    <i className="bi bi-folder text-primary"></i>
-                  </div>
-                  <div>
-                    <h6 className="mb-1">Projects</h6>
-                    <p className="text-muted small mb-0">
-                      Track, update, and collaborate on ongoing projects
-                    </p>
-                  </div>
-                </div>
-                <div className="d-flex align-items-center">
-                  <div
-                    className="rounded-circle bg-primary bg-opacity-10 me-3 d-flex align-items-center justify-content-center"
-                    style={{
-                      width: "40px",
-                      height: "40px",
-                      minWidth: "40px",
-                    }}
-                  >
-                    <i className="bi bi-calendar-event text-primary"></i>
-                  </div>
-                  <div>
-                    <h6 className="mb-1">Public Events</h6>
-                    <p className="text-muted small mb-0">
-                      Discover and follow public project events and activities
-                    </p>
-                  </div>
-                </div>
-                <div className="d-flex align-items-center">
-                  <div
-                    className="rounded-circle bg-primary bg-opacity-10 me-3 d-flex align-items-center justify-content-center"
-                    style={{
-                      width: "40px",
-                      height: "40px",
-                      minWidth: "40px",
-                    }}
-                  >
-                    <i className="bi bi-box-arrow-in-right text-primary"></i>
-                  </div>
-                  <div>
-                    <h6 className="mb-1">Join Project</h6>
-                    <p className="text-muted small mb-0">
-                      Enter invitation code to join existing projects
-                    </p>
-                  </div>
-                </div>
-                <div className="d-flex align-items-center">
-                  <div
-                    className="rounded-circle bg-primary bg-opacity-10 me-3 d-flex align-items-center justify-content-center"
-                    style={{
-                      width: "40px",
-                      height: "40px",
-                      minWidth: "40px",
-                    }}
-                  >
-                    <i className="bi bi-people text-primary"></i>
-                  </div>
-                  <div>
-                    <h6 className="mb-1">Profiles</h6>
-                    <p className="text-muted small mb-0">
-                      Discover and connect with other musicians and
-                      collaborators
-                    </p>
-                  </div>
-                </div>
-                <div className="d-flex align-items-center">
-                  <div
-                    className="rounded-circle bg-primary bg-opacity-10 me-3 d-flex align-items-center justify-content-center"
-                    style={{
-                      width: "40px",
-                      height: "40px",
-                      minWidth: "40px",
-                    }}
-                  >
-                    <i className="bi bi-person text-primary"></i>
-                  </div>
-                  <div>
-                    <h6 className="mb-1">My Profile</h6>
-                    <p className="text-muted small mb-0">
-                      Manage your account settings and information
-                    </p>
-                  </div>
-                </div>
+                <DashboardElementPresentation
+                  icon={"bi-person"}
+                  title={"My Profile"}
+                  text={"Manage your account settings and information"}
+                />
+                <DashboardElementPresentation
+                  icon={"bi-people"}
+                  title={"Profiles"}
+                  text={
+                    "Discover and connect with other musicians and collaborators"
+                  }
+                />
+                <DashboardElementPresentation
+                  icon={"bi-folder"}
+                  title={"Projects"}
+                  text={"Track, update, and collaborate on ongoing projects"}
+                />
+                <DashboardElementPresentation
+                  icon={"bi-music-note-list"}
+                  title={"Music Library"}
+                  text={
+                    "Explore and listen to public songs from all public projects"
+                  }
+                />
+                <DashboardElementPresentation
+                  icon={"bi-calendar-event"}
+                  title={"Public Events"}
+                  text={
+                    "Discover and follow public project events and activities"
+                  }
+                />
+                <DashboardElementPresentation
+                  icon={"bi-list-check"}
+                  title={"Tasks"}
+                  text={"Manage operations and oversee tasks efficiently"}
+                />
+                <DashboardElementPresentation
+                  icon={"bi-box-arrow-in-right"}
+                  title={"Join Project"}
+                  text={"Enter invitation code to join existing projects"}
+                />
               </div>
             </div>
             <div className="col-md-4 mt-4 mt-md-0">
@@ -178,22 +111,9 @@ const Dashboard = () => {
                     </button>
                     <button
                       className="btn btn-outline-primary d-flex align-items-center justify-content-center"
-                      onClick={() => navigate("/join-project")}
-                    >
-                      <i className="bi bi-box-arrow-in-right me-2"></i> Join
-                      Project
-                    </button>
-                    <button
-                      className="btn btn-outline-primary d-flex align-items-center justify-content-center"
                       onClick={() => navigate("/profiles")}
                     >
                       <i className="bi bi-people-fill me-2"></i> Profiles
-                    </button>
-                    <button
-                      className="btn btn-outline-primary d-flex align-items-center justify-content-center"
-                      onClick={() => navigate("/administrative-tasks")}
-                    >
-                      <i className="bi bi-list-check me-2"></i> Tasks
                     </button>
                     <button
                       className="btn btn-outline-primary d-flex align-items-center justify-content-center"
@@ -203,9 +123,29 @@ const Dashboard = () => {
                     </button>
                     <button
                       className="btn btn-outline-primary d-flex align-items-center justify-content-center"
+                      onClick={() => navigate("/music-library")}
+                    >
+                      <i className="bi bi-music-note-list me-2"></i> Music
+                      Library
+                    </button>
+                    <button
+                      className="btn btn-outline-primary d-flex align-items-center justify-content-center"
                       onClick={() => navigate("/events")}
                     >
                       <i className="bi bi-calendar me-2"></i> Events
+                    </button>
+                    <button
+                      className="btn btn-outline-primary d-flex align-items-center justify-content-center"
+                      onClick={() => navigate("/administrative-tasks")}
+                    >
+                      <i className="bi bi-list-check me-2"></i> Tasks
+                    </button>
+                    <button
+                      className="btn btn-outline-primary d-flex align-items-center justify-content-center"
+                      onClick={() => navigate("/join-project")}
+                    >
+                      <i className="bi bi-box-arrow-in-right me-2"></i> Join
+                      Project
                     </button>
                     <button
                       className="btn btn-outline-danger d-flex align-items-center justify-content-center mt-2"

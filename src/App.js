@@ -33,6 +33,7 @@ import JoinProjectPage from "./pages/JoinProject";
 import { ThemeProvider } from "./components/ThemeContext";
 import NotFound from "./components/NotFound";
 import Events from "./pages/Events";
+import PublicMusicLibrary from "./pages/PublicMusicLibrary";
 
 const DefaultRoute = () => {
   const isAuthenticated = localStorage.getItem("token");
@@ -191,6 +192,14 @@ const AppRoutes = () => {
         element={
           <PrivateLayout>
             <ProtectedRoute component={ProjectPublicProfile} />
+          </PrivateLayout>
+        }
+      />
+      <Route
+        path="/music-library"
+        element={
+          <PrivateLayout>
+            <ProtectedRoute component={PublicMusicLibrary} />
           </PrivateLayout>
         }
       />

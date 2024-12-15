@@ -95,6 +95,14 @@ const Navbar = () => {
               </Link>
             </li>
             <li className="nav-item px-1">
+              <Link
+                className="nav-link d-flex align-items-center"
+                to="/music-library"
+              >
+                <i className="bi bi-music-note-list me-2"></i> Music Library
+              </Link>
+            </li>
+            <li className="nav-item px-1">
               <Link className="nav-link d-flex align-items-center" to="/events">
                 <i className="bi bi-calendar me-2"></i>
                 Events
