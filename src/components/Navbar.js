@@ -2,7 +2,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { confirmAlert } from "react-confirm-alert";
 import ThemeToggle from "./ThemeToggle";
 import { useTheme } from "./ThemeContext";
-import { notificationService } from "../api/notificationService";
 import { useContext } from "react";
 import { format } from "date-fns";
 import { NotificationContext } from "./NotificationContext";
@@ -145,7 +144,7 @@ const Navbar = () => {
                 )}
               </button>
               <div
-                className="dropdown-menu dropdown-menu-end"
+                className="dropdown-menu dropdown-menu-start mt-3"
                 style={{
                   minWidth: "300px",
                   maxHeight: "400px",

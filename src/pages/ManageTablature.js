@@ -39,7 +39,7 @@ const ManageTablature = () => {
 
       fetchTab();
     }
-  }, [isUpdate, tabId]);
+  }, [isUpdate, tabId, showToast]);
 
   const handleSave = async (updatedContent) => {
     if (!title || !instrument) {

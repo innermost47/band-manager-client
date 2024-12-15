@@ -51,7 +51,6 @@ const SignUp = () => {
         response.data.message ===
         "User created successfully. Verification code sent to email."
       ) {
-        console.log("Redirecting to email verification...");
         showToast(
           "A verification code has been sent to your email.",
           "success"

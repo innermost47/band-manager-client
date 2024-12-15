@@ -43,10 +43,8 @@ const Login = () => {
         password,
       });
       if (response.data.message === "Verification code sent to your email.") {
-        console.log("Redirecting to 2FA verification...");
         navigate("/verify-2fa", { state: { email } });
       } else {
-        console.log("Login successful, navigating to dashboard...");
         localStorage.setItem("token", response.data.token);
         navigate("/dashboard");
       }
@@ -98,7 +96,7 @@ const Login = () => {
         localStorage.removeItem("token");
       }
     }
-  }, [location]);
+  }, [location, showToast]);
 
   const renderRegistrationMessage = () => {
     if (!registrationAvailable && registrationStats) {

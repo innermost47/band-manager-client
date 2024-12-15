@@ -36,6 +36,7 @@ const SongDetails = () => {
   const { showToast } = useToast();
   const [audioUrls, setAudioUrls] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const [originalLyrics, setOriginalLyrics] = useState("");
 
   useEffect(() => {
     const fetchSong = async () => {
@@ -43,7 +44,9 @@ const SongDetails = () => {
         setIsLoading(true);
         const response = await songService.getSong(id);
         setSong(response.data);
-        setLyrics(response.data.lyrics[0]?.content || "");
+        const initialLyrics = response.data.lyrics[0]?.content || "";
+        setLyrics(initialLyrics);
+        setOriginalLyrics(initialLyrics);
         setBpm(response.data.song.bpm || 120);
         setScale(response.data.song.scale || "C Major");
         const initialDescriptions = {};
@@ -150,11 +153,11 @@ const SongDetails = () => {
         showToast("Lyrics cannot be empty!", "error");
         return;
       }
-      console.log("Payload being sent:", payload);
       await songService.updateSong(id, payload);
       setIsEditingLyrics(false);
       const response = await songService.getSong(id);
       setSong(response.data);
+      setOriginalLyrics(lyrics);
       showToast("Lyrics updated successfully", "success");
     } catch (error) {
       console.error("Error saving lyrics:", error);
@@ -197,7 +200,6 @@ const SongDetails = () => {
         description: newDescription,
       });
       const response = await songService.getSong(id);
-      console.log(response);
       setSong(response.data);
       showToast("Description updated successfully!", "success");
     } catch (error) {
@@ -261,6 +263,11 @@ const SongDetails = () => {
       console.error("Error updating audio file type:", error);
       showToast("Failed to update audio file type. Please try again.", "error");
     }
+  };
+
+  const handleLyricsCancel = () => {
+    setLyrics(originalLyrics);
+    setIsEditingLyrics(false);
   };
 
   if (isLoading) {
@@ -451,7 +458,7 @@ const SongDetails = () => {
                   </button>
                   <button
                     className="btn btn-secondary btn-sm ms-2"
-                    onClick={() => setIsEditingLyrics(false)}
+                    onClick={handleLyricsCancel}
                   >
                     Cancel
                   </button>
@@ -459,7 +466,11 @@ const SongDetails = () => {
               ) : (
                 <div className="lyrics-content">
                   {lyrics ? (
-                    <div dangerouslySetInnerHTML={{ __html: lyrics }}></div>
+                    <div
+                      dangerouslySetInnerHTML={{
+                        __html: lyrics.replace(/<p/g, '<p class="mb-0"'),
+                      }}
+                    ></div>
                   ) : (
                     <p className="text-muted">No lyrics available</p>
                   )}

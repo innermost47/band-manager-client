@@ -12,40 +12,74 @@ const PublicMusicLibrary = () => {
   const [currentPlaylist, setCurrentPlaylist] = useState([]);
   const navigate = useNavigate();
   const [playerHeight, setPlayerHeight] = useState(400);
-  const [isDragging, setIsDragging] = useState(false);
   const isDraggingRef = useRef(false);
+  const startYRef = useRef(0);
+  const initialHeightRef = useRef(0);
 
-  const handleMouseMove = useCallback((e) => {
+  const handleDragStart = useCallback(
+    (clientY) => {
+      isDraggingRef.current = true;
+      startYRef.current = clientY;
+      initialHeightRef.current = playerHeight;
+    },
+    [playerHeight]
+  );
+
+  const handleDragMove = useCallback((clientY) => {
     if (isDraggingRef.current) {
+      const deltaY = startYRef.current - clientY;
       const windowHeight = window.innerHeight;
-      const newHeight = windowHeight - e.clientY;
+      const newHeight = initialHeightRef.current + deltaY;
       setPlayerHeight(Math.min(Math.max(newHeight, 200), windowHeight * 0.8));
     }
   }, []);
 
-  const handleMouseUp = useCallback(() => {
+  const handleDragEnd = useCallback(() => {
     isDraggingRef.current = false;
-    setIsDragging(false);
+  }, []);
+
+  const handleMouseMove = useCallback(
+    (e) => {
+      handleDragMove(e.clientY);
+    },
+    [handleDragMove]
+  );
+
+  const handleMouseUp = useCallback(() => {
+    handleDragEnd();
     document.removeEventListener("mousemove", handleMouseMove);
     document.removeEventListener("mouseup", handleMouseUp);
-  }, [handleMouseMove]);
+  }, [handleDragEnd, handleMouseMove]);
 
   const handleMouseDown = useCallback(
     (e) => {
-      isDraggingRef.current = true;
-      setIsDragging(true);
+      handleDragStart(e.clientY);
       document.addEventListener("mousemove", handleMouseMove);
       document.addEventListener("mouseup", handleMouseUp);
     },
-    [handleMouseMove, handleMouseUp]
+    [handleDragStart, handleMouseMove, handleMouseUp]
   );
 
-  useEffect(() => {
-    return () => {
-      document.removeEventListener("mousemove", handleMouseMove);
-      document.removeEventListener("mouseup", handleMouseUp);
-    };
-  }, [handleMouseMove, handleMouseUp]);
+  const handleTouchStart = useCallback(
+    (e) => {
+      const touch = e.touches[0];
+      handleDragStart(touch.clientY);
+    },
+    [handleDragStart]
+  );
+
+  const handleTouchMove = useCallback(
+    (e) => {
+      e.preventDefault();
+      const touch = e.touches[0];
+      handleDragMove(touch.clientY);
+    },
+    [handleDragMove]
+  );
+
+  const handleTouchEnd = useCallback(() => {
+    handleDragEnd();
+  }, [handleDragEnd]);
 
   const formatAudioData = (project) => {
     return project.songs.map((song) => ({
@@ -341,8 +375,12 @@ const PublicMusicLibrary = () => {
             style={{
               cursor: "ns-resize",
               padding: "1px",
+              touchAction: "none",
             }}
             onMouseDown={handleMouseDown}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
           >
             <div
               className="bg-secondary rounded"
