@@ -325,7 +325,7 @@ const UserProfile = () => {
               icon={"bi-person-circle"}
               actionButton={
                 <>
-                  <i className="bi bi-pencil-square me-1"></i> Edit
+                  <i className="bi bi-pencil me-1"></i> Edit
                 </>
               }
               onAction={() => setIsEditing(true)}

@@ -32,6 +32,7 @@ import ForgotPassword from "./pages/ForgotPassword";
 import JoinProjectPage from "./pages/JoinProject";
 import { ThemeProvider } from "./components/ThemeContext";
 import NotFound from "./components/NotFound";
+import Events from "./pages/Events";
 
 const DefaultRoute = () => {
   const isAuthenticated = localStorage.getItem("token");
@@ -214,6 +215,14 @@ const AppRoutes = () => {
         element={
           <PrivateLayout>
             <ProtectedRoute component={PublicProfiles} />
+          </PrivateLayout>
+        }
+      />
+      <Route
+        path="/events"
+        element={
+          <PrivateLayout>
+            <ProtectedRoute component={Events} />
           </PrivateLayout>
         }
       />

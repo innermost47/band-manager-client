@@ -82,7 +82,7 @@ const Navbar = () => {
                 to="/profiles"
               >
                 <i className="bi bi-people me-2"></i>
-                Public Profiles
+                Profiles
               </Link>
             </li>
             <li className="nav-item px-1">
@@ -95,12 +95,9 @@ const Navbar = () => {
               </Link>
             </li>
             <li className="nav-item px-1">
-              <Link
-                className="nav-link d-flex align-items-center"
-                to="/join-project"
-              >
-                <i className="bi bi-box-arrow-in-right me-2"></i>
-                Join Project
+              <Link className="nav-link d-flex align-items-center" to="/events">
+                <i className="bi bi-calendar me-2"></i>
+                Events
               </Link>
             </li>
             <li className="nav-item px-1">
@@ -109,7 +106,16 @@ const Navbar = () => {
                 to="/administrative-tasks"
               >
                 <i className="bi bi-list-check me-2"></i>
-                Administrative Tasks
+                Tasks
+              </Link>
+            </li>
+            <li className="nav-item px-1">
+              <Link
+                className="nav-link d-flex align-items-center"
+                to="/join-project"
+              >
+                <i className="bi bi-box-arrow-in-right me-2"></i>
+                Join Project
               </Link>
             </li>
           </ul>

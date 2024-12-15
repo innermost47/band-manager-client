@@ -348,13 +348,12 @@ const SongDetails = () => {
               title={"Musical Properties"}
               icon={"bi-music-note"}
               actionButton={
-                !isEditingBpmScale && (
-                  <>
-                    <i className="bi bi-pencil me-1"></i> Edit
-                  </>
-                )
+                <>
+                  <i className="bi bi-pencil me-1"></i> Edit
+                </>
               }
               onAction={() => setIsEditingBpmScale(true)}
+              isDisabled={isEditingBpmScale}
             />
             <div className="card-body">
               {isEditingBpmScale ? (
@@ -391,13 +390,13 @@ const SongDetails = () => {
                   </div>
                   <div className="d-flex gap-2">
                     <button
-                      className="btn btn-primary"
+                      className="btn btn-primary btn-sm"
                       onClick={handleSaveBpmScale}
                     >
                       <i className="bi bi-check-lg me-1"></i> Save
                     </button>
                     <button
-                      className="btn btn-secondary"
+                      className="btn btn-secondary btn-sm"
                       onClick={() => setIsEditingBpmScale(false)}
                     >
                       Cancel
@@ -427,14 +426,13 @@ const SongDetails = () => {
               title={"Lyrics"}
               icon={"bi-file-text"}
               actionButton={
-                <button className="btn btn-primary btn-sm rounded-pill">
-                  <i
-                    className={`bi bi-${isEditingLyrics ? "x" : "pencil"} me-1`}
-                  ></i>
-                  {isEditingLyrics ? "Cancel" : "Edit"}
-                </button>
+                <>
+                  <i className={`bi bi-pencil me-1`}></i>
+                  Edit
+                </>
               }
-              onAction={() => setIsEditingLyrics(!isEditingLyrics)}
+              onAction={() => setIsEditingLyrics(true)}
+              isDisabled={isEditingLyrics}
             />
             <div className="card-body">
               {isEditingLyrics ? (
@@ -446,10 +444,16 @@ const SongDetails = () => {
                     className="quill-editor mb-3"
                   />
                   <button
-                    className="btn btn-primary"
+                    className="btn btn-primary btn-sm"
                     onClick={handleLyricsSave}
                   >
                     <i className="bi bi-check-lg me-1"></i> Save
+                  </button>
+                  <button
+                    className="btn btn-secondary btn-sm ms-2"
+                    onClick={() => setIsEditingLyrics(false)}
+                  >
+                    Cancel
                   </button>
                 </>
               ) : (
@@ -472,9 +476,9 @@ const SongDetails = () => {
               title={"Tablatures"}
               icon={"bi-file-music"}
               actionButton={
-                <button className="btn btn-primary btn-sm rounded-pill">
+                <>
                   <i className="bi bi-plus-lg me-1"></i> Create
-                </button>
+                </>
               }
               onAction={() => navigate(`/tablatures/create/${song.song.id}`)}
             />

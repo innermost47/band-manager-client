@@ -16,4 +16,7 @@ export const eventService = {
   delete: async (id) => {
     return await api.delete(`/api/events/${id}`);
   },
+  getPublicEvents: async () => {
+    return await api.get(`/api/events/publics`);
+  },
 };

@@ -66,7 +66,7 @@ const Dashboard = () => {
                     <i className="bi bi-list-check text-primary"></i>
                   </div>
                   <div>
-                    <h6 className="mb-1">Administrative Tasks</h6>
+                    <h6 className="mb-1">Tasks</h6>
                     <p className="text-muted small mb-0">
                       Manage operations and oversee tasks efficiently
                     </p>
@@ -87,6 +87,24 @@ const Dashboard = () => {
                     <h6 className="mb-1">Projects</h6>
                     <p className="text-muted small mb-0">
                       Track, update, and collaborate on ongoing projects
+                    </p>
+                  </div>
+                </div>
+                <div className="d-flex align-items-center">
+                  <div
+                    className="rounded-circle bg-primary bg-opacity-10 me-3 d-flex align-items-center justify-content-center"
+                    style={{
+                      width: "40px",
+                      height: "40px",
+                      minWidth: "40px",
+                    }}
+                  >
+                    <i className="bi bi-calendar-event text-primary"></i>
+                  </div>
+                  <div>
+                    <h6 className="mb-1">Public Events</h6>
+                    <p className="text-muted small mb-0">
+                      Discover and follow public project events and activities
                     </p>
                   </div>
                 </div>
@@ -120,7 +138,7 @@ const Dashboard = () => {
                     <i className="bi bi-people text-primary"></i>
                   </div>
                   <div>
-                    <h6 className="mb-1">Public Profiles</h6>
+                    <h6 className="mb-1">Profiles</h6>
                     <p className="text-muted small mb-0">
                       Discover and connect with other musicians and
                       collaborators
@@ -169,20 +187,25 @@ const Dashboard = () => {
                       className="btn btn-outline-primary d-flex align-items-center justify-content-center"
                       onClick={() => navigate("/profiles")}
                     >
-                      <i className="bi bi-people-fill me-2"></i> Public Profiles
+                      <i className="bi bi-people-fill me-2"></i> Profiles
                     </button>
                     <button
                       className="btn btn-outline-primary d-flex align-items-center justify-content-center"
                       onClick={() => navigate("/administrative-tasks")}
                     >
-                      <i className="bi bi-list-check me-2"></i> Administrative
-                      Tasks
+                      <i className="bi bi-list-check me-2"></i> Tasks
                     </button>
                     <button
                       className="btn btn-outline-primary d-flex align-items-center justify-content-center"
                       onClick={() => navigate("/projects")}
                     >
                       <i className="bi bi-folder me-2"></i> Projects
+                    </button>
+                    <button
+                      className="btn btn-outline-primary d-flex align-items-center justify-content-center"
+                      onClick={() => navigate("/events")}
+                    >
+                      <i className="bi bi-calendar me-2"></i> Events
                     </button>
                     <button
                       className="btn btn-outline-danger d-flex align-items-center justify-content-center mt-2"

@@ -23,8 +23,8 @@ const EventList = ({ events, isLoading }) => {
   return (
     <div>
       {events.map((event) => (
-        <div key={event.id} className="mb-3 card shadow">
-          <div className="d-flex gap-4 p-3 bg-dark bg-opacity-10 rounded hover-bg">
+        <div key={event.id} className="mb-3 card">
+          <div className="d-flex gap-4 p-3 bg-body rounded hover-bg">
             <div
               className="text-center border-end pe-4"
               style={{ minWidth: "80px" }}

@@ -511,7 +511,7 @@ const ProjectDetails = () => {
                         showToast("Event deleted successfully");
                       }}
                       onCancel={handleEventFormCancel}
-                      ref={songFormRef}
+                      ref={eventFormRef}
                     />
                   </div>
                 )}

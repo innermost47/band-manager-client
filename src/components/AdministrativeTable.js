@@ -551,7 +551,6 @@ const AdministrativeTable = ({ task, onUpdate, onDelete }) => {
   };
 
   const renderColumnType = (index) => {
-    console.log(columnTypes);
     if (!columnTypes || index >= columnTypes.length) {
       return "string";
     }
