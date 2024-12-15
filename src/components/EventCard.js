@@ -16,9 +16,9 @@ const EventCard = ({ event, onEdit }) => {
     <div className="col-md-6 mb-3">
       <div className="card h-100 border shadow-sm">
         <div className="card-body p-4">
-          <div className="d-flex justify-content-between">
-            <div className="d-flex align-items-center">
-              <h5 className="mb-0">{event.name}</h5>
+          <div className="d-flex justify-content-between align-items-start">
+            <div className="d-flex align-items-start">
+              <h6 className="mb-0">{event.name}</h6>
               {event.is_public && (
                 <span className="badge bg-success ms-2">Public</span>
               )}
@@ -26,7 +26,7 @@ const EventCard = ({ event, onEdit }) => {
             <div>
               {" "}
               <button
-                className="btn btn-light btn-sm rounded-circle"
+                className="btn btn-light btn-sm rounded-circle ms-4"
                 onClick={() => onEdit(event)}
               >
                 <i className="bi bi-pencil"></i>

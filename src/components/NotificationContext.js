@@ -67,20 +67,20 @@ export const NotificationProvider = ({ children }) => {
 
   const deleteAllNotifications = async () => {
     confirmAlert({
-      title: "Delete Notifications",
-      message: "Are you sure you want to delete all your notifications?",
+      title: "Clear Notification History",
+      message: "Clear all notification history?",
       buttons: [
         {
-          label: "Yes, Delete",
+          label: "Yes, Clear",
           onClick: async () => {
             try {
               await notificationService.deleteAllNotifications();
               await fetchNotifications();
-              showToast("All notifications deleted successfully", "success");
+              showToast("Notifications successfully cleared", "success");
             } catch (err) {
               console.error("Failed to delete notifications");
               showToast(
-                "Failed to delete notifications. Please try again.",
+                "Error clearing notifications. Please try again.",
                 "error"
               );
             }

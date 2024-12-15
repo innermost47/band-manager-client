@@ -39,15 +39,6 @@ const NotificationPanel = () => {
                 Mark all as read
               </button>
             )}
-            {notifications.length > 0 && (
-              <button
-                className="btn btn-outline-danger btn-sm d-flex align-items-center"
-                onClick={() => deleteAllNotifications()}
-              >
-                <i className={`bi bi-trash me-2`}></i>
-                Delete
-              </button>
-            )}
             {readNotifications.length > 0 && (
               <button
                 className="btn btn-outline-secondary btn-sm d-flex align-items-center"
@@ -110,21 +101,35 @@ const NotificationPanel = () => {
                 <div className="mt-2 mb-0">
                   <h6 className="text-muted mb-0">History</h6>
                 </div>
-                {readNotifications.map((notification) => (
-                  <div
-                    key={notification.id}
-                    onClick={() => handleNotificationClick(notification)}
-                    className="card border"
-                    style={{ cursor: "pointer" }}
-                  >
-                    <div className="card-body p-2">
-                      <p className="mb-1 small">{notification.content}</p>
-                      <small className="text-muted">
-                        {format(new Date(notification.createdAt), "PPp")}
-                      </small>
+                <div
+                  style={{ maxHeight: "300px", overflowY: "auto" }}
+                  className="mb-2"
+                >
+                  {readNotifications.map((notification) => (
+                    <div
+                      key={notification.id}
+                      onClick={() => handleNotificationClick(notification)}
+                      className="card border mb-2 shadow-sm"
+                      style={{ cursor: "pointer" }}
+                    >
+                      <div className="card-body p-2">
+                        <p className="mb-1 small">{notification.content}</p>
+                        <small className="text-muted">
+                          {format(new Date(notification.createdAt), "PPp")}
+                        </small>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
+                <div>
+                  <button
+                    className="btn btn-outline-danger btn-sm d-flex align-items-center"
+                    onClick={() => deleteAllNotifications()}
+                  >
+                    <i className={`bi bi-trash me-2`}></i>
+                    Clear
+                  </button>
+                </div>
               </>
             )}
           </div>
