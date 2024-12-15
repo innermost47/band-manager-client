@@ -12,7 +12,6 @@ const PublicMusicLibrary = () => {
   const [currentPlaylist, setCurrentPlaylist] = useState([]);
   const navigate = useNavigate();
   const [playerHeight, setPlayerHeight] = useState(400);
-  const [isDragging, setIsDragging] = useState(false);
   const isDraggingRef = useRef(false);
 
   const handleMouseMove = useCallback((e) => {
@@ -161,7 +160,7 @@ const PublicMusicLibrary = () => {
                     style={{ cursor: "pointer" }}
                   >
                     <div className="me-2">
-                      {project.profileImage ? (
+                      {/* {project.profileImage ? (
                         <img
                           src={project.profileImage}
                           alt={project.name}
@@ -169,14 +168,14 @@ const PublicMusicLibrary = () => {
                           width="24"
                           height="24"
                         />
-                      ) : (
-                        <div
-                          className="bg-primary bg-opacity-10 rounded d-flex align-items-center justify-content-center"
-                          style={{ width: 24, height: 24 }}
-                        >
-                          <i className="bi bi-music-note text-primary small"></i>
-                        </div>
-                      )}
+                      ) : ( */}
+                      <div
+                        className="bg-primary bg-opacity-10 rounded d-flex align-items-center justify-content-center"
+                        style={{ width: 24, height: 24 }}
+                      >
+                        <i className="bi bi-music-note text-primary small"></i>
+                      </div>
+                      {/* )} */}
                     </div>
                     <div className="flex-grow-1 text-truncate">
                       <div className="fw-medium small">{project.name}</div>
@@ -204,17 +203,17 @@ const PublicMusicLibrary = () => {
                   className="bg-primary bg-opacity-10 rounded-3 p-4 me-4"
                   style={{ width: 150, height: 150 }}
                 >
-                  {selectedProject.profileImage ? (
+                  {/* {selectedProject.profileImage ? (
                     <img
                       src={selectedProject.profileImage}
                       alt={selectedProject.name}
                       className="w-100 h-100 object-fit-cover rounded-3"
                     />
-                  ) : (
-                    <div className="w-100 h-100 d-flex align-items-center justify-content-center">
-                      <i className="bi bi-music-note-beamed display-1 text-primary"></i>
-                    </div>
-                  )}
+                  ) : ( */}
+                  <div className="w-100 h-100 d-flex align-items-center justify-content-center">
+                    <i className="bi bi-music-note-beamed display-1 text-primary"></i>
+                  </div>
+                  {/* )} */}
                 </div>
                 <div>
                   <div className="text-uppercase text-muted small mb-1">

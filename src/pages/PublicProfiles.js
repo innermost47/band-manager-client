@@ -26,7 +26,6 @@ const PublicProfiles = () => {
 
   return (
     <div className="container mt-5">
-      {/* Header */}
       <div className="text-center mb-4">
         <div
           className="rounded-circle bg-primary bg-opacity-10 d-inline-flex align-items-center justify-content-center mb-3"
