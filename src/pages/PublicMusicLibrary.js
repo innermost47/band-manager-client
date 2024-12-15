@@ -12,6 +12,7 @@ const PublicMusicLibrary = () => {
   const [currentPlaylist, setCurrentPlaylist] = useState([]);
   const navigate = useNavigate();
   const [playerHeight, setPlayerHeight] = useState(400);
+  const [isDragging, setIsDragging] = useState(false);
   const isDraggingRef = useRef(false);
 
   const handleMouseMove = useCallback((e) => {
