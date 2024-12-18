@@ -310,7 +310,10 @@ const DocumentHandler = ({ projectId }) => {
               </div>
             </div>
           ) : documents.length > 0 ? (
-            <div className="list-group">
+            <div
+              className="list-group overflow-auto"
+              style={{ maxHeight: "400px" }}
+            >
               {documents.map((doc) => {
                 const { icon, color } = getFileIcon(doc.type);
                 return (
