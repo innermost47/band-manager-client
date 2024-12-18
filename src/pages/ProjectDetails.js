@@ -31,7 +31,7 @@ const ProjectDetails = () => {
   const eventFormRef = useRef(null);
   const [events, setEvents] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [isEventFormVisible, setIsEventFormVisible] = useState(false);
   const navigate = useNavigate();
 

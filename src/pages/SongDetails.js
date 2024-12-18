@@ -35,7 +35,7 @@ const SongDetails = () => {
   const [audioDescriptions, setAudioDescriptions] = useState({});
   const { showToast } = useToast();
   const [audioUrls, setAudioUrls] = useState({});
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [originalLyrics, setOriginalLyrics] = useState("");
 
   useEffect(() => {

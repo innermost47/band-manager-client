@@ -5,7 +5,7 @@ import { loginService } from "../api/loginService";
 const InviteForm = ({ userProjects, onInvite }) => {
   const [selectedProject, setSelectedProject] = useState("");
   const [email, setEmail] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [invitationAvailable, setInvitationAvailable] = useState(true);
   const [invitationStats, setInvitationStats] = useState(null);
 

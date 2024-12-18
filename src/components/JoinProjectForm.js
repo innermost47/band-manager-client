@@ -4,7 +4,7 @@ import { useToast } from "./ToastContext";
 
 const JoinProjectForm = ({ onJoin }) => {
   const [invitationCode, setInvitationCode] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const { showToast } = useToast();
 
   const handleSubmit = async (e) => {

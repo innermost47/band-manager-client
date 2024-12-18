@@ -35,8 +35,7 @@ const NotificationPanel = () => {
                 className="btn btn-outline-primary btn-sm d-flex align-items-center"
                 onClick={markAllAsRead}
               >
-                <i className="bi bi-check2-all me-2"></i>
-                Mark all as read
+                <i className="bi bi-check2-all"></i>
               </button>
             )}
             {readNotifications.length > 0 && (
@@ -44,10 +43,7 @@ const NotificationPanel = () => {
                 className="btn btn-outline-secondary btn-sm d-flex align-items-center"
                 onClick={() => setShowHistory(!showHistory)}
               >
-                <i
-                  className={`bi bi-eye${showHistory ? "-slash" : ""} me-2`}
-                ></i>
-                {showHistory ? "Hide History" : "Show History"}
+                <i className={`bi bi-eye${showHistory ? "-slash" : ""}`}></i>
               </button>
             )}
           </div>

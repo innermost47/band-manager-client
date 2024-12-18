@@ -9,7 +9,7 @@ import { format } from "date-fns";
 
 const Events = () => {
   const [events, setEvents] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {

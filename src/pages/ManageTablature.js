@@ -11,7 +11,7 @@ const ManageTablature = () => {
   const { songId, tabId } = useParams();
   const location = useLocation();
   const [title, setTitle] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [instrument, setInstrument] = useState("");
   const [content, setContent] = useState("");
   const { showToast } = useToast();

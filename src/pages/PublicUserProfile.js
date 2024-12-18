@@ -11,7 +11,7 @@ const PublicUserProfile = () => {
   const [projectCount, setProjectCount] = useState(0);
   const [projectsA, setProjectsA] = useState([]);
   const [recipientId, setUserBId] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const { showToast } = useToast();
   const { id } = useParams();
   const navigate = useNavigate();

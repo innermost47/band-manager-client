@@ -54,7 +54,7 @@ const DocumentHandler = ({ projectId }) => {
   const [isUploading, setIsUploading] = useState(false);
   const [selectedPdf, setSelectedPdf] = useState(null);
   const [pdfUrl, setPdfUrl] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [isViewerModalOpen, setIsViewerModalOpen] = useState(false);
   const [isLoadingDocuments, setIsLoadingDocuments] = useState(false);
   const windowWidth = useWindowWidth();
