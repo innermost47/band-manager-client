@@ -12,6 +12,7 @@ import { eventService } from "../api/eventService";
 import EventCard from "../components/EventCard";
 import { useToast } from "../components/ToastContext";
 import NotFound from "../components/NotFound";
+import DocumentHandler from "../components/DocumentHandler";
 
 const ProjectDetails = () => {
   const { id } = useParams();
@@ -535,6 +536,7 @@ const ProjectDetails = () => {
               </div>
             </div>
           </div>
+          <DocumentHandler projectId={project.id} />
 
           {/* Audio Player Section */}
           <div>
