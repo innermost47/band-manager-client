@@ -2,11 +2,11 @@ name: Deploy Band Manager App
 on:
   push:
     branches:
-      - main 
+      - main
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -14,8 +14,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
-          cache: 'npm'
+          node-version: "18"
+          cache: "npm"
 
       - name: Install dependencies
         run: npm ci
@@ -30,15 +30,6 @@ jobs:
           REACT_APP_COMPANY_EMAIL: ${{ secrets.REACT_APP_COMPANY_EMAIL }}
           REACT_APP_COMPANY_PHONE: ${{ secrets.REACT_APP_COMPANY_PHONE }}
           REACT_APP_HOSTING_PROVIDER: ${{ secrets.REACT_APP_HOSTING_PROVIDER }}
-
-      - name: Copy .htaccess to build
-        run: |
-          echo "RewriteEngine On" > build/.htaccess
-          echo "RewriteCond %{HTTPS} !=on" >> build/.htaccess
-          echo "RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]" >> build/.htaccess
-          echo "RewriteCond %{REQUEST_FILENAME} !-f" >> build/.htaccess
-          echo "RewriteCond %{REQUEST_FILENAME} !-d" >> build/.htaccess
-          echo "RewriteRule ^ index.html [L]" >> build/.htaccess
 
       - name: Configure SSH
         run: |
