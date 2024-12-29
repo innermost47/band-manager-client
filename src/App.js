@@ -34,6 +34,7 @@ import { ThemeProvider } from "./components/ThemeContext";
 import NotFound from "./components/NotFound";
 import Events from "./pages/Events";
 import PublicMusicLibrary from "./pages/PublicMusicLibrary";
+import ChatPage from "./pages/ChatPage";
 
 const DefaultRoute = () => {
   const isAuthenticated = localStorage.getItem("token");
@@ -112,7 +113,6 @@ const AppRoutes = () => {
         }
       />
 
-      {/* Route légale avec Layout mais sans Navbar */}
       <Route
         path="/legals"
         element={
@@ -122,7 +122,6 @@ const AppRoutes = () => {
         }
       />
 
-      {/* Routes protégées avec Layout et Navbar */}
       <Route
         path="/dashboard"
         element={
@@ -240,6 +239,14 @@ const AppRoutes = () => {
         element={
           <PrivateLayout>
             <ProtectedRoute component={AdministrativeTaskDetails} />
+          </PrivateLayout>
+        }
+      />
+      <Route
+        path="/chat"
+        element={
+          <PrivateLayout>
+            <ProtectedRoute component={ChatPage} />
           </PrivateLayout>
         }
       />

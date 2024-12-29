@@ -125,6 +125,12 @@ const Navbar = () => {
                 Join Project
               </Link>
             </li>
+            <li className="nav-item px-1">
+              <Link className="nav-link d-flex align-items-center" to="/chat">
+                <i className="bi bi-chat-dots me-2"></i>
+                Chat Projects
+              </Link>
+            </li>
           </ul>
           <div className="d-flex gap-2">
             <ThemeToggle />

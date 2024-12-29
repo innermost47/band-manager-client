@@ -1,6 +1,7 @@
 import api from "./api";
 
 export const userService = {
+  getMyProjects: async () => await api.get("/api/users/myprojects"),
   getUsers: async () => await api.get("/api/users"),
   getProfile: async () => await api.get(`/api/users/profile`),
   getMember: async (id) => await api.get(`/api/users/member/${id}`),

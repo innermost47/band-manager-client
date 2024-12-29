@@ -96,6 +96,13 @@ const Dashboard = () => {
                   title={"Join Project"}
                   text={"Enter invitation code to join existing projects"}
                 />
+                <DashboardElementPresentation
+                  icon={"bi-chat-dots"}
+                  title={"Chat Projects"}
+                  text={
+                    "Communicate in real-time with your project team members"
+                  }
+                />
               </div>
             </div>
             <div className="col-md-4 mt-4 mt-md-0">
@@ -146,6 +153,12 @@ const Dashboard = () => {
                     >
                       <i className="bi bi-box-arrow-in-right me-2"></i> Join
                       Project
+                    </button>
+                    <button
+                      className="btn btn-outline-primary d-flex align-items-center justify-content-center"
+                      onClick={() => navigate("/chat")}
+                    >
+                      <i className="bi bi-chat-dots me-2"></i> Chat Projects
                     </button>
                     <button
                       className="btn btn-outline-danger d-flex align-items-center justify-content-center mt-2"
