@@ -30,9 +30,8 @@ const NotFound = () => {
               Return to the dashboard and explore other sections.
             </p>
             <a
-              href="#"
               className="btn btn-primary"
-              onClick={navigate("/dashboard")}
+              onClick={() => navigate("/dashboard")}
             >
               <i className="bi bi-grid-fill me-2"></i>
               Dashboard
