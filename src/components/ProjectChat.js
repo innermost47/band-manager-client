@@ -89,8 +89,12 @@ const GlobalChat = () => {
     }
 
     pollingInterval.current = setInterval(async () => {
+      console.log("Polling tick, timestamp:", lastMessageTimestamp);
       try {
-        if (!lastMessageTimestamp) return;
+        if (!lastMessageTimestamp) {
+          console.log("No timestamp, skipping");
+          return;
+        }
 
         const timestamp = lastMessageTimestamp;
         const response = await chatService.getNewMessages(
@@ -123,7 +127,6 @@ const GlobalChat = () => {
         clearInterval(pollingInterval.current);
       }
       setMessages([]);
-      setLastMessageTimestamp(null);
     };
   }, []);
 
