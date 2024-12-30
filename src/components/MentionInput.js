@@ -54,7 +54,7 @@ const MentionInput = ({ value, onChange, project, placeholder }) => {
         }}
       />
       {showSuggestions && (
-        <div className="position-absolute bottom-100 start-0 w-100 bg-white border rounded shadow-sm mb-4">
+        <div className="position-absolute bottom-100 start-0 w-100 bg-body border rounded shadow-sm mb-4">
           {filteredMembers.map((member) => (
             <button
               key={member.id}
