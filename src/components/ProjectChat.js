@@ -280,7 +280,26 @@ const GlobalChat = () => {
                               {new Date(message.createdAt).toLocaleTimeString()}
                             </small>
                           </div>
-                          <div className="mt-1">{message.content}</div>
+                          <div className="mt-1">
+                            {message.content.split(/\s+/).map((word, i) => {
+                              const isUrl = /^(http|https):\/\/[^\s]+$/.test(
+                                word
+                              );
+                              return isUrl ? (
+                                <React.Fragment key={i}>
+                                  <a
+                                    href={word}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                  >
+                                    {word}
+                                  </a>{" "}
+                                </React.Fragment>
+                              ) : (
+                                word + " "
+                              );
+                            })}
+                          </div>
                         </div>
                       </div>
                     </div>
