@@ -12,13 +12,21 @@ export const notificationService = {
   vapidPublicKey: process.env.REACT_APP_VAPID_PUBLIC_KEY,
 
   async getProcessedVapidPublicKey() {
+    if (!this.vapidPublicKey) {
+      throw new Error("VAPID public key is missing");
+    }
     const decodedJson = JSON.parse(atob(this.vapidPublicKey));
-    return `${decodedJson.x}.${decodedJson.y}`;
+    const xBytes = this.urlBase64ToUint8Array(decodedJson.x);
+    const yBytes = this.urlBase64ToUint8Array(decodedJson.y);
+    const vapidKeyBytes = new Uint8Array(xBytes.length + yBytes.length);
+    vapidKeyBytes.set(xBytes);
+    vapidKeyBytes.set(yBytes, xBytes.length);
+    return vapidKeyBytes;
   },
 
   urlBase64ToUint8Array(base64String) {
     if (!base64String) {
-      throw new Error("VAPID public key is missing");
+      throw new Error("Base64 string is missing");
     }
     const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
     const base64 = (base64String + padding)
@@ -52,7 +60,7 @@ export const notificationService = {
 
       const subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
-        applicationServerKey: this.urlBase64ToUint8Array(vapidKey),
+        applicationServerKey: vapidKey,
       });
       return true;
     } catch (error) {
