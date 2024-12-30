@@ -68,8 +68,8 @@ const GlobalChat = () => {
       }
 
       const init = async () => {
-        await fetchMessages();
-        startPolling();
+        const timestamp = await fetchMessages();
+        startPolling(timestamp);
       };
 
       init();
@@ -83,22 +83,22 @@ const GlobalChat = () => {
     }
   }, [activeChannel?.id]);
 
-  const startPolling = () => {
+  const startPolling = (initialTimestamp) => {
     if (pollingInterval.current) {
       clearInterval(pollingInterval.current);
     }
 
     pollingInterval.current = setInterval(async () => {
       try {
-        if (!lastMessageTimestamp) {
+        const currentTimestamp = initialTimestamp || lastMessageTimestamp;
+        if (!currentTimestamp) {
           console.log("No timestamp, skipping");
           return;
         }
 
-        const timestamp = lastMessageTimestamp;
         const response = await chatService.getNewMessages(
           activeChannel.id,
-          timestamp
+          currentTimestamp
         );
 
         if (response?.data?.length > 0) {
@@ -126,6 +126,7 @@ const GlobalChat = () => {
         clearInterval(pollingInterval.current);
       }
       setMessages([]);
+      setLastMessageTimestamp(null);
     };
   }, []);
 
@@ -134,15 +135,20 @@ const GlobalChat = () => {
       const response = await chatService.getMessages(activeChannel.id);
       const sortedMessages = response.data.reverse();
       setMessages(sortedMessages);
-      if (sortedMessages && sortedMessages.length > 0) {
-        const lastMessage = sortedMessages[sortedMessages.length - 1];
-        setLastMessageTimestamp(new Date(lastMessage.createdAt).toISOString());
-      } else {
-        setLastMessageTimestamp(new Date(0).toISOString());
-      }
+
+      const timestamp =
+        sortedMessages.length > 0
+          ? new Date(
+              sortedMessages[sortedMessages.length - 1].createdAt
+            ).toISOString()
+          : new Date(0).toISOString();
+
+      setLastMessageTimestamp(timestamp);
+      return timestamp;
     } catch (error) {
-      console.error("Error fetching messages:", error);
-      setLastMessageTimestamp(new Date(0).toISOString());
+      const timestamp = new Date(0).toISOString();
+      setLastMessageTimestamp(timestamp);
+      return timestamp;
     }
   };
 
