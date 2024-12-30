@@ -66,9 +66,15 @@ const GlobalChat = () => {
       if (pollingInterval.current) {
         clearInterval(pollingInterval.current);
       }
-      fetchMessages();
-      startPolling();
+
+      const init = async () => {
+        await fetchMessages();
+        startPolling();
+      };
+
+      init();
       setSidebarVisible(!isSmallScreen);
+
       return () => {
         if (pollingInterval.current) {
           clearInterval(pollingInterval.current);
