@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { chatService } from "../api/chatService";
 import { userService } from "../api/userService";
+import MentionInput from "./MentionInput";
 
 const GlobalChat = () => {
   const [projects, setProjects] = useState([]);
@@ -254,6 +255,11 @@ const GlobalChat = () => {
                 </div>
                 <div
                   className="flex-grow-1 overflow-auto p-3 bg-body vh-100"
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "flex-end",
+                  }}
                   ref={messagesEndRef}
                 >
                   {messages.map((message) => (
@@ -281,24 +287,35 @@ const GlobalChat = () => {
                             </small>
                           </div>
                           <div className="mt-1">
-                            {message.content.split(/\s+/).map((word, i) => {
-                              const isUrl = /^(http|https):\/\/[^\s]+$/.test(
-                                word
-                              );
-                              return isUrl ? (
-                                <React.Fragment key={i}>
-                                  <a
-                                    href={word}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                  >
-                                    {word}
-                                  </a>{" "}
-                                </React.Fragment>
-                              ) : (
-                                word + " "
-                              );
-                            })}
+                            {message.content
+                              .split(/(\s+|@[^\s]+)/)
+                              .map((word, i) => {
+                                const isUrl = /^(http|https):\/\/[^\s]+$/.test(
+                                  word
+                                );
+                                const isMention = /^@[^\s]+$/.test(word);
+                                if (isUrl) {
+                                  return (
+                                    <React.Fragment key={i}>
+                                      <a
+                                        href={word}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                      >
+                                        {word}
+                                      </a>{" "}
+                                    </React.Fragment>
+                                  );
+                                }
+                                if (isMention) {
+                                  return (
+                                    <span key={i} className="text-primary">
+                                      {word}{" "}
+                                    </span>
+                                  );
+                                }
+                                return word;
+                              })}
                           </div>
                         </div>
                       </div>
@@ -306,25 +323,18 @@ const GlobalChat = () => {
                   ))}
                 </div>
 
-                {/* Input message */}
                 <div className="border-top p-3 bg-body">
                   <form onSubmit={sendMessage} className="position-relative">
-                    <input
-                      type="text"
-                      className="form-control"
+                    <MentionInput
+                      value={newMessage}
+                      onChange={setNewMessage}
+                      project={projects.find(
+                        (p) => p.channel.id === activeChannel.id
+                      )}
                       placeholder={`Message #${
                         activeChannel.project?.name || activeChannel.name
                       }`}
-                      value={newMessage}
-                      onChange={(e) => setNewMessage(e.target.value)}
                     />
-                    <button
-                      type="submit"
-                      className="btn btn-link position-absolute end-0 top-50 translate-middle-y"
-                      disabled={!newMessage.trim()}
-                    >
-                      <i className="bi bi-send"></i>
-                    </button>
                   </form>
                 </div>
               </>
