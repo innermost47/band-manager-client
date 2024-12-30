@@ -30,6 +30,7 @@ jobs:
           REACT_APP_COMPANY_EMAIL: ${{ secrets.REACT_APP_COMPANY_EMAIL }}
           REACT_APP_COMPANY_PHONE: ${{ secrets.REACT_APP_COMPANY_PHONE }}
           REACT_APP_HOSTING_PROVIDER: ${{ secrets.REACT_APP_HOSTING_PROVIDER }}
+          REACT_APP_VAPID_PUBLIC_KEY: ${{secrets.REACT_APP_VAPID_PUBLIC_KEY}}
 
       - name: Configure SSH
         run: |

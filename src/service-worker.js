@@ -4,24 +4,7 @@
 
 self.__WB_MANIFEST;
 
-const isDevelopment =
-  self.location.hostname === "localhost" ||
-  self.location.hostname === "127.0.0.1";
-
 self.addEventListener("push", function (event) {
-  if (isDevelopment) {
-    const title = "Test Notification";
-    const options = {
-      body: "This is a test notification in development mode",
-      icon: "/logo.png",
-      data: {
-        url: "http://localhost:3000",
-      },
-    };
-    event.waitUntil(self.registration.showNotification(title, options));
-    return;
-  }
-
   if (event.data) {
     const data = event.data.json();
     const options = {
