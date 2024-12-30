@@ -35,6 +35,7 @@ export const notificationService = {
   async registerPushNotifications() {
     try {
       const vapidKey = await this.getProcessedVapidPublicKey();
+      console.log("Processed VAPID Key:", vapidKey);
       if (!("Notification" in window)) {
         throw new Error("This browser does not support notifications");
       }
@@ -48,6 +49,7 @@ export const notificationService = {
       const registration = await navigator.serviceWorker.register(
         "/service-worker.js"
       );
+
       const subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
         applicationServerKey: this.urlBase64ToUint8Array(vapidKey),
