@@ -89,7 +89,6 @@ const GlobalChat = () => {
     }
 
     pollingInterval.current = setInterval(async () => {
-      console.log("Polling tick, timestamp:", lastMessageTimestamp);
       try {
         if (!lastMessageTimestamp) {
           console.log("No timestamp, skipping");
