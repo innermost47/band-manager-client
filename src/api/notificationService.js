@@ -12,6 +12,10 @@ export const notificationService = {
   vapidPublicKey: process.env.REACT_APP_VAPID_PUBLIC_KEY,
 
   urlBase64ToUint8Array(base64String) {
+    if (!base64String) {
+      throw new Error("VAPID public key is missing");
+    }
+    console.log("Raw VAPID Public Key:", base64String);
     const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
     const base64 = (base64String + padding)
       .replace(/-/g, "+")
@@ -44,6 +48,7 @@ export const notificationService = {
         userVisibleOnly: true,
         applicationServerKey: this.urlBase64ToUint8Array(this.vapidPublicKey),
       });
+      console.log("Subscription success:", subscription);
       return true;
     } catch (error) {
       console.error("Error enabling notifications:", error);
