@@ -2,9 +2,61 @@ import { useNavigate } from "react-router-dom";
 import { confirmAlert } from "react-confirm-alert";
 import NotificationPanel from "../components/NotificationPanel";
 import DashboardElementPresentation from "../components/DashboardElementPresentation";
+import { notificationService } from "../api/notificationService";
+import { useEffect, useState } from "react";
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const [isSubscribed, setIsSubscribed] = useState(false);
+
+  useEffect(() => {
+    const checkNotificationStatus = async () => {
+      const status = await notificationService.checkNotificationStatus();
+      setIsSubscribed(status);
+    };
+    checkNotificationStatus();
+  }, []);
+
+  const handleNotificationToggle = async () => {
+    try {
+      if (!isSubscribed) {
+        await notificationService.registerPushNotifications();
+        setIsSubscribed(true);
+        localStorage.setItem("notificationsEnabled", "true");
+      } else {
+        confirmAlert({
+          title: "Disable Notifications",
+          message: "Are you sure you want to disable notifications?",
+          buttons: [
+            {
+              label: "Yes, Disable",
+              onClick: async () => {
+                localStorage.removeItem("notificationsEnabled");
+                setIsSubscribed(false);
+              },
+            },
+            {
+              label: "Cancel",
+              onClick: () => {},
+            },
+          ],
+        });
+      }
+    } catch (error) {
+      console.error("Error toggling notifications:", error);
+      confirmAlert({
+        title: "Notification Error",
+        message:
+          "Could not enable notifications. Please check your browser permissions.",
+        buttons: [
+          {
+            label: "OK",
+            onClick: () => {},
+          },
+        ],
+      });
+    }
+  };
 
   const handleLogout = () => {
     confirmAlert({
@@ -159,6 +211,19 @@ const Dashboard = () => {
                       onClick={() => navigate("/chat")}
                     >
                       <i className="bi bi-chat-dots me-2"></i> Chat Projects
+                    </button>
+                    <button
+                      className="btn btn-outline-primary d-flex align-items-center justify-content-center"
+                      onClick={handleNotificationToggle}
+                    >
+                      <i
+                        className={`bi bi-bell${
+                          isSubscribed ? "-fill" : ""
+                        } me-2`}
+                      ></i>
+                      {isSubscribed
+                        ? "Notifications On"
+                        : "Enable Notifications"}
                     </button>
                     <button
                       className="btn btn-outline-danger d-flex align-items-center justify-content-center mt-2"
