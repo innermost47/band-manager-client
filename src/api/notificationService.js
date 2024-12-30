@@ -11,11 +11,15 @@ export const notificationService = {
 
   vapidPublicKey: process.env.REACT_APP_VAPID_PUBLIC_KEY,
 
+  async getProcessedVapidPublicKey() {
+    const decodedJson = JSON.parse(atob(this.vapidPublicKey));
+    return `${decodedJson.x}.${decodedJson.y}`;
+  },
+
   urlBase64ToUint8Array(base64String) {
     if (!base64String) {
       throw new Error("VAPID public key is missing");
     }
-    console.log("Raw VAPID Public Key:", base64String);
     const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
     const base64 = (base64String + padding)
       .replace(/-/g, "+")
@@ -30,6 +34,7 @@ export const notificationService = {
 
   async registerPushNotifications() {
     try {
+      const vapidKey = await this.getProcessedVapidPublicKey();
       if (!("Notification" in window)) {
         throw new Error("This browser does not support notifications");
       }
@@ -43,12 +48,10 @@ export const notificationService = {
       const registration = await navigator.serviceWorker.register(
         "/service-worker.js"
       );
-      let subscription;
-      subscription = await registration.pushManager.subscribe({
+      const subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
-        applicationServerKey: this.urlBase64ToUint8Array(this.vapidPublicKey),
+        applicationServerKey: this.urlBase64ToUint8Array(vapidKey),
       });
-      console.log("Subscription success:", subscription);
       return true;
     } catch (error) {
       console.error("Error enabling notifications:", error);
