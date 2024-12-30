@@ -1,3 +1,9 @@
+/* eslint-disable no-restricted-globals */
+/* eslint-disable no-undef */
+/* eslint-disable no-unused-expressions */
+
+self.__WB_MANIFEST;
+
 const isDevelopment =
   self.location.hostname === "localhost" ||
   self.location.hostname === "127.0.0.1";
