@@ -4,6 +4,7 @@ import { userService } from "../api/userService";
 import MentionInput from "./MentionInput";
 
 const GlobalChat = () => {
+  const isPollingPaused = useRef(false);
   const [projects, setProjects] = useState([]);
   const [activeChannel, setActiveChannel] = useState(null);
   const [messages, setMessages] = useState([]);
@@ -95,6 +96,10 @@ const GlobalChat = () => {
           console.log("No timestamp, skipping");
           return;
         }
+        if (isPollingPaused.current) {
+          console.log("Polling is paused, skipping this cycle");
+          return;
+        }
 
         const response = await chatService.getNewMessages(
           activeChannel.id,
@@ -102,17 +107,27 @@ const GlobalChat = () => {
         );
 
         if (response?.data?.length > 0) {
-          const newMessages = response.data.filter(
-            (newMsg) =>
-              !messages.some((existingMsg) => existingMsg.id === newMsg.id)
-          );
-          if (newMessages.length > 0) {
-            setMessages((prev) => [...prev, ...newMessages]);
-            const lastNewMessage = newMessages[newMessages.length - 1];
-            setLastMessageTimestamp(
-              new Date(lastNewMessage.createdAt).toISOString()
+          setMessages((prevMessages) => {
+            const existingMessageIds = new Set(
+              prevMessages.map((msg) => msg.id)
             );
-          }
+
+            const uniqueNewMessages = response.data.filter(
+              (newMsg) => !existingMessageIds.has(newMsg.id)
+            );
+
+            if (uniqueNewMessages.length > 0) {
+              const lastNewMessage =
+                uniqueNewMessages[uniqueNewMessages.length - 1];
+              setLastMessageTimestamp(
+                new Date(lastNewMessage.createdAt).toISOString()
+              );
+
+              return [...prevMessages, ...uniqueNewMessages];
+            }
+
+            return prevMessages;
+          });
         }
       } catch (error) {
         console.error("Error polling messages:", error);
@@ -182,17 +197,21 @@ const GlobalChat = () => {
     if (!newMessage.trim()) return;
 
     try {
+      isPollingPaused.current = true;
       const response = await chatService.postMessage(activeChannel.id, {
         content: newMessage,
       });
-
       setNewMessage("");
       setMessages((prev) => [...prev, response.data]);
       const messageTimestamp = new Date(response.data.createdAt);
       setLastMessageTimestamp(messageTimestamp.toISOString());
       scrollToBottom(messagesEndRef.current);
+      setTimeout(() => {
+        isPollingPaused.current = false;
+      }, 1000);
     } catch (error) {
       console.error("Error sending message:", error);
+      isPollingPaused.current = false;
     }
   };
 
